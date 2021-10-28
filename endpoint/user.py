@@ -14,6 +14,7 @@ class user_type(str, Enum):
     admin='admin'
     worker='worker'
     fellow="fellow"
+    user="user"
 #2 gender
 class gender(str, Enum):
     male='male'

@@ -33,14 +33,6 @@ project.include_router(stock_router)
 from endpoint.address import router as address_router
 project.include_router(address_router)
 
-#house router
-from endpoint.house import router as house_router
-project.include_router(house_router)
-
-#member router
-from endpoint.member import router as member_router
-project.include_router(member_router)
-
 #form router
 from endpoint.form import router as form_router
 project.include_router(form_router)
