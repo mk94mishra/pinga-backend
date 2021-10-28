@@ -1,0 +1,20 @@
+select distinct created_by_id,  member_id, split_part(created_at::text, ' ', 1) as created_at  from "answer" 
+group by created_by_id,member_id,created_at
+order by created_by_id 
+
+------------------
+
+
+with
+tw as (select form_id, member_id, option_id, total_weightage
+		from view_member_answer where total_weightage is not null)
+
+select sum(tw.total_weightage) as sum_weightage, tw.form_id, tw.member_id 
+from tw
+group by tw.form_id, tw.member_id
+
+----------
+
+select form_id, max(total_weightage) as max_weightage
+from view_member_answer
+group by form_id
