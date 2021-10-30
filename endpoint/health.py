@@ -18,7 +18,7 @@ class type(str, Enum):
 #1 period
 class period(BaseModel):
    start_date:str
-   end_date:healthal[str] = None
+   end_date:Optional[str] = None
 
 
 
