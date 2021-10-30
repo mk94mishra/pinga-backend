@@ -184,54 +184,20 @@ left join "user" as u2 on s.assigned_to_id=u2.id
 order by s.id desc
 );
 
-
-
-
-#8 house
-CREATE TABLE house (
+# health
+CREATE TABLE health(
 id BIGSERIAL PRIMARY KEY NOT NULL,
 created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
 is_active BOOLEAN NOT NULL DEFAULT true,
 
-created_by_id bigint REFERENCES "user" NOT NULL,
+created_by bigint NOT NULL,
+
+type VARCHAR (100) NOT NULL,
+start_date date,
+end_date date,
 
 data jsonb
 );
-
-#house master
-create view house_master as (
-select h.*,
-u.name as created_by_name,u.mobile as created_by_mobile,u.type as created_by_user_type,u.profile_pic_url as created_by_profile_pic_url
-from house as h
-left join "user" as u
-on h.created_by_id=u.id
-order by h.id desc
-);
-
-
-#9 member 
-CREATE TABLE member (
-id BIGSERIAL PRIMARY KEY NOT NULL,
-created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
-is_active BOOLEAN NOT NULL DEFAULT true,
-
-created_by_id bigint REFERENCES "user" NOT NULL,
-
-house_id bigint REFERENCES house NOT NULL,
-
-data jsonb
-);
-
-#member master
-create view member_master as (
-select m.*,
-u.name as created_by_name,u.mobile as created_by_mobile,u.type as created_by_user_type,u.profile_pic_url as created_by_profile_pic_url
-from member as m
-left join "user" as u
-on m.created_by_id=u.id
-order by m.id desc
-);
-
 
 # form
 CREATE TABLE form (
@@ -306,9 +272,7 @@ created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
 is_active BOOLEAN NOT NULL DEFAULT true,
 
 created_by_id bigint REFERENCES "user" NOT NULL,
-member_id bigint REFERENCES member NOT NULL,
 option_id bigint REFERENCES option NOT NULL,
-unique_uuid VARCHAR (100) UNIQUE,
 data jsonb
 );
 
@@ -333,7 +297,7 @@ left join f on f.id=q.form_id
 order by a.option_id asc
 
 
-# question arrage formate
+# question arrange formate
 with 
 f as (select * from form),
 q1 as (select * from question where parent_question_id is null),
@@ -403,8 +367,8 @@ order by form_id,q1_id,q1_o_id,q2_o_id,q3_o_id,q4_o_id asc
 
 
 
-# view_member_answer
-create view view_member_answer as
+# view_user_answer
+create view view_user_answer as
 with 
 q1 as (select form_id, q1_id,q1_score,q1_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is null and q3_id is null and q4_id is null),
 q2 as (select form_id, q1_id,q1_score,q2_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is null and q4_id is null),
@@ -418,7 +382,7 @@ all_question as (select q1.* from q1
 		union
 		select q4.* from q4)
 
-select a.member_id,aq.* from answer as a
+select a.created_by_id as user_id ,aq.* from answer as a
 left join all_question as aq on aq.option_id=a.option_id
 order by aq.q1_id,aq.option_id asc
 

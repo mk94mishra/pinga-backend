@@ -11,7 +11,6 @@ router=APIRouter(tags=["answer"])
 #scehema
 #1 answer
 class answer(BaseModel):
-   member_id:int
    option_id:int
 
 
@@ -21,21 +20,11 @@ async def answer_create(request:Request,payload:answer):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()
-   unique_uuid = str(uuid.uuid1())
    #query set
-   query="""insert into answer (created_by_id,member_id,option_id,unique_uuid) values (:created_by_id,:member_id,:option_id,:unique_uuid)"""
-   values={"created_by_id":user_id,"member_id":payload['member_id'],"option_id":payload['option_id'],"unique_uuid":unique_uuid}
+   query="""insert into answer (created_by_id,option_id) values (:created_by_id,:option_id) returning *"""
+   values={"created_by_id":user_id,"option_id":payload['option_id']}
    #query run
    response=await database_execute(query,values)
-   if response["status"]=="false":
-      raise HTTPException(status_code=400,detail=response)
-   
-   #query set
-   query="""select * from answer where unique_uuid=:unique_uuid;"""
-   values={"unique_uuid":unique_uuid}
-   #query run
-   response=await database_fetch_all(query,values)
-
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
@@ -44,8 +33,8 @@ async def answer_create(request:Request,payload:answer):
 
 
 #2 answer read
-@router.get("/answer/member/{member_id}/form/{form_id}")
-async def answer_read(request:Request,member_id:int,form_id:int):
+@router.get("/answer/user/{user_id}/form/{form_id}")
+async def answer_read(request:Request,user_id:int,form_id:int):
    #prework
    user_id=request.state.user_id
    #query set
@@ -61,9 +50,9 @@ async def answer_read(request:Request,member_id:int,form_id:int):
    from answer as a 
    left join o on o.id=a.option_id
    left join q on q.id=o.question_id
-   where a.form_id=:form_id and a.member_id=:member_id 
+   where a.form_id=:form_id and a.created_by_id=:user_id 
    """
-   values={"form_id":form_id, "member_id":member_id}
+   values={"form_id":form_id, "user_id":user_id}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
