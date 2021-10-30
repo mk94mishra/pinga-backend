@@ -7,7 +7,7 @@ from datetime import date
 from enum import Enum, IntEnum
 import uuid
 
-router=APIRouter(tags=["heath"])
+router=APIRouter(tags=["health"])
 
 #validation
 #1 media:type

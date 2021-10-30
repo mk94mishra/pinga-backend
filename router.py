@@ -49,6 +49,11 @@ project.include_router(option_router)
 from endpoint.answer import router as answer_router
 project.include_router(answer_router)
 
+
+#health report router
+from endpoint.health import router as health_router
+project.include_router(health_router)
+
 #result router
 from endpoint.result import router as result_router
 project.include_router(result_router)
@@ -56,6 +61,8 @@ project.include_router(result_router)
 #monitor report router
 from endpoint.monitor import router as monitor_router
 project.include_router(monitor_router)
+
+
 
 
 
