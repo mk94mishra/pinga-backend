@@ -1,6 +1,6 @@
 #1 fastapi project
 from fastapi import FastAPI
-project = FastAPI()
+project = FastAPI(title = "pinga backend", version = "1.0")
 
 
 #2 project root end point
