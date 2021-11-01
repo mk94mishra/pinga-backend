@@ -54,6 +54,25 @@ on p.created_by_id=u.id
 order by p.id desc
 );
 
+# blog
+CREATE TABLE blog(
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+is_active BOOLEAN NOT NULL DEFAULT true,
+
+created_by_id bigint REFERENCES "user" NOT NULL,
+
+description VARCHAR (1000),
+link_url VARCHAR (1000),
+media_type VARCHAR (10),
+media_thumbnail_url VARCHAR (500),
+media_url VARCHAR (500),
+type VARCHAR (50),
+day bigint,
+
+data jsonb
+);
+
 
 #3 mood
 CREATE TABLE mood(

@@ -54,6 +54,9 @@ project.include_router(answer_router)
 from endpoint.health import router as health_router
 project.include_router(health_router)
 
+#blog report router
+from endpoint.blog import router as blog_router
+project.include_router(blog_router)
 #result router
 from endpoint.result import router as result_router
 project.include_router(result_router)
