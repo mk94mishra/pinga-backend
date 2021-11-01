@@ -37,6 +37,12 @@ class helpdesk(BaseModel):
    whatsapp:str
 
 
+#4 extra:interest
+class interest(BaseModel):
+   title:str
+   image:str
+
+
 #endpoint
 #1 extra create:quickguide
 @router.post("/extra/quick-guide")
@@ -93,6 +99,27 @@ async def extra_create_helpdesk(request:Request,payload:helpdesk):
    #query set
    query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
    values={"created_by_id":user_id,"type":"helpdesk","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
+#3 extra create:interest
+@router.post("/extra/interest")
+async def extra_create_interest(request:Request,payload:interest):
+   #prework
+   user_id=request.state.user_id
+   payload=json.dumps(payload.dict())
+   # admin user check
+   response = await is_admin(user_id)
+   if response['status']!="true":
+      raise HTTPException(status_code=400,detail=response)
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
+   values={"created_by_id":user_id,"type":"interest","data":payload}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
@@ -169,6 +196,26 @@ async def extra_update_helpdesk(request:Request,id:int,payload:helpdesk):
       raise HTTPException(status_code=400,detail=response)
    #finally
    return response
+
+
+
+#7 extra update
+@router.put("/extra/{id}/interest")
+async def extra_update_interest(request:Request,id:int,payload:helpdesk):
+   #prework
+   user_id=request.state.user_id
+   payload=json.dumps(payload.dict())
+   #query set
+   query="""update extra set data=:data where id=:id"""
+   values={"id":id,"data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
 
 #8 extra update
 @router.put("/extra/{id}/scheme")

@@ -69,12 +69,12 @@ async def blog_read(request:Request,offset:int):
 
 #3 blog read:by type
 @router.get("/blog/type/{blog_type}")
-async def blog_read_type(request:Request,blog_type:str,offset:int):
+async def blog_read_type(request:Request,blog_type:str):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from blog where blog_type=:blog_type limit 10 offset :offset;"""
-   values={"blog_type":blog_type,"offset":offset}
+   query="""select * from blog where blog_type=:blog_type;"""
+   values={"blog_type":blog_type}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":

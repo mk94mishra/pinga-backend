@@ -42,11 +42,11 @@ async def period_create(request:Request,payload:period):
 
 #2 health read
 @router.get("/health/user/{user_id}")
-async def health_read(request:Request,user_id:int):
+async def health_read(request:Request,user_id:int,offset:int):
    
    #query set
-   query="""select * from health where created_by=:created_by;"""
-   values={"created_by":user_id}
+   query="""select * from health where created_by=:created_by limit 30 offset :offset;"""
+   values={"created_by":user_id,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
