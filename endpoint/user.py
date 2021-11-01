@@ -122,7 +122,7 @@ async def user_update_profile_self(request:Request,payload:user_profile):
 
 #3 user profile update:self
 @router.put("/user/profile-update-self/interest")
-async def user_update_profile_self(request:Request,payload:user_interest):
+async def user_update_profile_self(request:Request,payload:interest):
    #prework
    user_id = request.state.user_id
    payload=json.dumps(payload.dict())  
