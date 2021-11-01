@@ -40,7 +40,9 @@ class user_create(BaseModel):
    type:user_type
    mobile:str
    password:str
-
+#4 extra:interest
+class interest(BaseModel):
+   interest:list
 
 #endpoint
 #1 user login:admin
@@ -109,6 +111,24 @@ async def user_update_profile_self(request:Request,payload:user_profile):
    #query set
    query="""update "user" set name=:name,email=:email,gender=:gender,dob=:dob,profile_pic_url=:profile_pic_url,tnc_accepted=:tnc_accepted where id=:id"""
    values={"name":payload['name'],"email":payload['email'],"gender":payload['gender'],"dob":payload['dob'], "profile_pic_url":payload['profile_pic_url'],"tnc_accepted":payload["tnc_accepted"],"id":user_id}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
+
+#3 user profile update:self
+@router.put("/user/profile-update-self/interest")
+async def user_update_profile_self(request:Request,payload:user_interest):
+   #prework
+   user_id = request.state.user_id
+   payload=json.dumps(payload.dict())  
+   #query set
+   query="""update "user" set data=:data where id=:id"""
+   values={"data":payload,"id":user_id}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":

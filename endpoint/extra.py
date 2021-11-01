@@ -201,7 +201,7 @@ async def extra_update_helpdesk(request:Request,id:int,payload:helpdesk):
 
 #7 extra update
 @router.put("/extra/{id}/interest")
-async def extra_update_interest(request:Request,id:int,payload:helpdesk):
+async def extra_update_interest(request:Request,id:int,payload:interest):
    #prework
    user_id=request.state.user_id
    payload=json.dumps(payload.dict())
