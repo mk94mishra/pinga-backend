@@ -232,3 +232,22 @@ async def user_search_by_mobile(request:Request,mobile:str):
    #finally
    response=row
    return response
+
+
+
+#10 user create: by self
+@router.post("/user")
+async def user_create(request:Request,payload:user_create):
+   payload=payload.dict()
+   password_hash=password_hash_create(payload['password'])
+    
+   #query set
+   query="""insert into "user" (mobile,password,type) values (:mobile,:password,:type)"""
+   values={"mobile":payload['mobile'],"password":password_hash,"type":'user'}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+   

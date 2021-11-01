@@ -278,8 +278,6 @@ weightage int,
 media_type VARCHAR (20),
 media_url VARCHAR (500),
 media_thumbnail_url VARCHAR (500),
-
-unique_uuid VARCHAR (100) UNIQUE,
 data jsonb
 );
 
