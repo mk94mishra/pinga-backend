@@ -1,7 +1,7 @@
 from setting import *
 import json
 import uuid
-
+import boto3
 
 #1 public endpoint check
 async def is_public_endpoint(request):
@@ -129,9 +129,9 @@ async def get_presigned_url(filename_with_extension,user_id):
     #unique s3 key
     key=str(uuid.uuid4())+"_"+str(user_id)+"_"+filename_with_extension
     #s3 client
-    s3_client=boto3.client(config("aws_service"),region_name=config("region_name"),aws_access_key_id=config("aws_access_key_id"),aws_secret_access_key=config("aws_secret_access_key"))
+    s3_client=boto3.client(config["aws_service"],region_name=config["region_name"],aws_access_key_id=config["aws_access_key_id"],aws_secret_access_key=config["aws_secret_access_key"])
     #generate presigned post url
-    response=s3_client.generate_presigned_post(Bucket=config("s3_bucket_name"),Key=key,ExpiresIn=config.int("s3_link_expire_sec"))
+    response=s3_client.generate_presigned_post(Bucket=config["s3_bucket_name"],Key=key,ExpiresIn=config.int["s3_link_expire_sec"])
     return response
 
 
