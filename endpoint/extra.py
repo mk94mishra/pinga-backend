@@ -251,5 +251,13 @@ async def extra_delete(request:Request,id:int):
    return response
 
 
-
+#10 get presigned-url
+@router.get("/extra/get-presigned-url/{filename_with_extension}")
+async def get_s3_presigned_url(request:Request,filename_with_extension:str):
+   #prework
+   user_id=request.state.user_id
+   # query set
+   response=await get_presigned_url(filename_with_extension,user_id)
+   #fianlly
+   return response
 
