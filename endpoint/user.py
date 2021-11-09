@@ -256,18 +256,30 @@ async def user_search_by_mobile(request:Request,mobile:str):
 
 
 #10 user create: by self
-@router.post("/user")
-async def user_create(request:Request,payload:user_create):
+@router.post("/public/user/signup-normal")
+async def public_user_signup_normal(request:Request,payload:user_login):
+   #prework
    payload=payload.dict()
-   password_hash=password_hash_create(payload['password'])
-    
+   payload["mobile"]=payload["mobile"].lower()
+   payload["password"]=hashlib.md5(payload['password'].encode()).hexdigest()
+   #check null value
+   if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
+      raise HTTPException(status_code=400,detail="null or white space not allowed")
+   #check if username exist
+   query="""select * from "user" where mobile=:mobile;"""
+   values={"mobile":payload['mobile']}
+   response=await database_fetch_all(query,values)
+   if response["message"]!="no object found":
+      raise HTTPException(status_code=400,detail="mobile already exist")
    #query set
-   query="""insert into "user" (mobile,password,type) values (:mobile,:password,:type)"""
-   values={"mobile":payload['mobile'],"password":password_hash,"type":'user'}
+   query="""insert into "user" (created_by,type,mobile,password) values (:created_by,:type,:mobile,:password) returning *;"""
+   values={"created_by":1,"type":"normal","mobile":payload['mobile'],"password":payload['password']}
    #query run
    response=await database_execute(query,values)
+   #query fail
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
+   response["next"]="profile pic update"
    return response
    
