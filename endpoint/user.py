@@ -256,7 +256,7 @@ async def user_search_by_mobile(request:Request,mobile:str):
 
 
 #10 user create: by self
-@router.post("/public/user/signup-normal")
+@router.post("/user/signup-normal")
 async def public_user_signup_normal(request:Request,payload:user_login):
    #prework
    payload=payload.dict()
