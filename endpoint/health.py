@@ -17,7 +17,7 @@ class type(str, Enum):
 #scehema
 #1 period
 class period(BaseModel):
-   start_date:str
+   start_date:Optional[str] = None
    end_date:Optional[str] = None
 
 
