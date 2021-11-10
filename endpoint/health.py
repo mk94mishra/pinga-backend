@@ -31,7 +31,7 @@ async def period_create(request:Request,payload:period):
    
    #query set
    query="""insert into health (created_by,start_date,end_date,type) values (:created_by,:start_date,:end_date,:type) returning *"""
-   values={"created_by":payload['created_by'],"start_date":payload['start_date'],"end_date":payload['end_date'],"type":payload['type']}
+   values={"created_by":user_id,"start_date":payload['start_date'],"end_date":payload['end_date'],"type":'period'}
    #query run
    response = await database_execute(query,values)
    if response["status"]=="false":
