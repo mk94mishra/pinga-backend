@@ -99,7 +99,7 @@ async def user_login_non_admin(request:Request,payload:user_login):
    if user['name']==None:
       response = {'id':user['id'],'token': token,'next endpoint':"profile update"}
       return response
-   response = {'id':user['id'],'token': token,'next':"admin app homepage"}
+   response = {'id':user['id'],'token': token,'next':"app homepage"}
    return response
 
 #3 user profile update:self
@@ -275,6 +275,6 @@ async def public_user_signup_normal(request:Request,payload:user_login):
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
-   response["next"]="profile pic update"
+   response["next"]="login-non-admin"
    return response
    
