@@ -153,7 +153,7 @@ async def extra_read_all(request:Request,type:extra_type,offset:int):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from extra_master where type=:type limit 10 offset :offset;"""
+   query="""select * from extra where type=:type limit 10 offset :offset;"""
    values={"type":type,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
