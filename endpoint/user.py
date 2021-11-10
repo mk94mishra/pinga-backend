@@ -265,12 +265,7 @@ async def public_user_signup_normal(request:Request,payload:user_login):
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
-   #check if username exist
-   query="""select * from "user" where mobile=:mobile;"""
-   values={"mobile":payload['mobile']}
-   response=await database_fetch_all(query,values)
-   if response["message"]!="no object found":
-      raise HTTPException(status_code=400,detail="mobile already exist")
+   
    #query set
    query="""insert into "user" (created_by,type,mobile,password) values (:created_by,:type,:mobile,:password) returning *;"""
    values={"created_by":1,"type":"normal","mobile":payload['mobile'],"password":payload['password']}
