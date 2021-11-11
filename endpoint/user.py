@@ -17,9 +17,14 @@ class user_type(str, Enum):
     user="user"
 #2 gender
 class gender(str, Enum):
-    male='male'
-    female='female'
-    other='other'
+   cis_female='Cis female'
+   cis_male='Cis male'
+   gender_expansive='Gender expansive'
+   intersex='Intersex'
+   non_binary='Non binary'
+   trans_female='Trans female'
+   trans_male='Trans male'
+   prefer_not_to_say='Prefer not to say'
   
 
 #scehema
