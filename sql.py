@@ -61,8 +61,7 @@ created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
 is_active BOOLEAN NOT NULL DEFAULT true,
 
 created_by_id bigint REFERENCES "user" NOT NULL,
-
-description VARCHAR (1000),
+title VARCHAR (500),
 link_url VARCHAR (1000),
 media_type VARCHAR (10),
 media_thumbnail_url VARCHAR (500),

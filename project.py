@@ -59,7 +59,6 @@ async def db_connect():
    print({"message":"database connected"})
 
 
-
 #7  database disconnect startup event
 @project.on_event("shutdown")
 async def db_disconnect():
