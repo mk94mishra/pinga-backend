@@ -74,7 +74,7 @@ async def blog_read_type(request:Request,blog_type:str):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from blog where type=:blog_type;"""
+   query="""select * from blog where type=:blog_type ;"""
    values={"blog_type":blog_type}
    #query run
    response=await database_fetch_all(query,values)
