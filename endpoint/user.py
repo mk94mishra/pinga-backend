@@ -132,7 +132,7 @@ async def user_update_profile_self(request:Request,payload:interest):
    user_id = request.state.user_id
    payload=json.dumps(payload.dict())  
    #query set
-   query="""update "user" set data=:data where id=:id"""
+   query="""update "user" set data=json_build_object('interest',:payload) where id=:id"""
    values={"data":payload,"id":user_id}
    #query run
    response=await database_execute(query,values)

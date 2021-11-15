@@ -83,7 +83,6 @@ async def database_fetch_all(query,values):
 async def database_execute(query,values):
    response={"status":"false"}
    try:
-      await database.connect()
       await database.execute(query=query,values=values)
       #await database.disconnect()
    except Exception as e:

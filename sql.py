@@ -16,7 +16,7 @@ password VARCHAR (50) NOT NULL,
 
 name VARCHAR(50),
 email VARCHAR (100) UNIQUE,
-gender VARCHAR(10),
+gender VARCHAR(50),
 dob date,
 profile_pic_url VARCHAR (500),
 tnc_accepted boolean,

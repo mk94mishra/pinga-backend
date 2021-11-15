@@ -10,9 +10,15 @@ router=APIRouter(tags=["mood"])
 #validation
 #1 mood:type
 class mood_type(str, Enum):
-    bad='bad'
-    okay='okay'
-    great='great'
+   bored='bored'
+   asthetic='asthetic'
+   calm='calm'
+   hyper='hyper'
+   great='great'
+   power='power'
+   super='super'
+   tired='tired'
+   happy='happy'
 
 #scehema
 #1 mood
