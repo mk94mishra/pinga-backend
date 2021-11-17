@@ -7,23 +7,11 @@ from enum import Enum, IntEnum
 
 router=APIRouter(tags=["mood"])
 
-#validation
-#1 mood:type
-class mood_type(str, Enum):
-   bored='bored'
-   asthetic='asthetic'
-   calm='calm'
-   hyper='hyper'
-   great='great'
-   power='power'
-   super='super'
-   tired='tired'
-   happy='happy'
 
 #scehema
 #1 mood
 class mood(BaseModel):
-   type:mood_type
+   type:list
 
 #endpoint
 #1 mood:create
@@ -31,7 +19,7 @@ class mood(BaseModel):
 async def mood_create(request:Request,payload:mood):
    #prework
    user_id = request.state.user_id
-   payload=payload.dict()
+   payload=json.dumps(payload.dict()) 
    today=date.today()
    #mood get today of self user
    query="""select * from mood where created_by_id=:created_by_id and created_at::date=:today"""
@@ -44,16 +32,16 @@ async def mood_create(request:Request,payload:mood):
    mood=row
    #mood not exist
    if mood==[]:
-      query="""insert into mood (created_by_id,type) values (:created_by_id,:type)"""
-      values={"created_by_id":user_id, "type":payload['type']}
+      query="""insert into mood (created_by_id,data) values (:created_by_id,json_build_object('moodtype',:payload))"""
+      values={"created_by_id":user_id, "payload":payload}
       response=await database_execute(query,values)
       if response["status"]=="false":
          raise HTTPException(status_code=400,detail=response)
       return response
    #mood exist
    #query set
-   query="""update mood set type=:type where id=:id"""
-   values={"type":payload['type'],"id":mood[0]["id"]}
+   query="""update mood set data=json_build_object('moodtype',:payload) where id=:id"""
+   values={"payload":payload,"id":mood[0]["id"]}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":

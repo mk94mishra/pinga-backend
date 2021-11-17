@@ -81,7 +81,7 @@ is_active BOOLEAN NOT NULL DEFAULT true,
 
 created_by_id bigint REFERENCES "user" NOT NULL,
 
-type VARCHAR(10) NOT NULL,
+type VARCHAR(50) NOT NULL,
 
 data jsonb
 
