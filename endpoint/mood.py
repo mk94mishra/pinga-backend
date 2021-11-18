@@ -51,7 +51,7 @@ async def mood_create(request:Request,payload:mood):
 
 
 #1 mood:sex o scale create
-@router.post("/sex-o-scale")
+@router.post("/mood/sex-o-scale")
 async def sex_o_scale_create(request:Request,payload:mood):
    #prework
    user_id = request.state.user_id
@@ -89,7 +89,7 @@ async def sex_o_scale_create(request:Request,payload:mood):
 
 #2 mood read:self
 @router.get("/mood/read-self")
-async def mood_read_self_last_7_days(request:Request):
+async def mood_read_self(request:Request):
    #prework
    user_id = request.state.user_id
    #query set
