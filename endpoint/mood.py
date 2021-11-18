@@ -19,7 +19,7 @@ class mood(BaseModel):
 async def mood_create(request:Request,payload:mood):
    #prework
    user_id = request.state.user_id
-   payload=json.dumps(payload.dict()) 
+   payload=payload.dict()
    today=date.today()
    #mood get today of self user
    query="""select * from mood where created_by_id=:created_by_id and created_at::date=:today and type='mood'"""
@@ -31,17 +31,18 @@ async def mood_create(request:Request,payload:mood):
    #mood assign
    mood=row
    #mood not exist
+   mood_data = json.dumps({'moodtype':payload['type']})
    if mood==[]:
-      query="""insert into mood (created_by_id,type,data) values (:created_by_id,:type,json_build_object('moodtype',:payload))"""
-      values={"created_by_id":user_id,"type":'mood', "payload":payload}
+      query="""insert into mood (created_by_id,type,data) values (:created_by_id,:type,:mood_data)"""
+      values={"created_by_id":user_id,"type":'mood', "mood_data":mood_data}
       response=await database_execute(query,values)
       if response["status"]=="false":
          raise HTTPException(status_code=400,detail=response)
       return response
    #mood exist
    #query set
-   query="""update mood set data=json_build_object('moodtype',:payload) where id=:id"""
-   values={"payload":payload,"id":mood[0]["id"]}
+   query="""update mood set data=:mood_data where id=:id"""
+   values={"mood_data":mood_data,"id":mood[0]["id"]}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
@@ -55,11 +56,12 @@ async def mood_create(request:Request,payload:mood):
 async def sex_o_scale_create(request:Request,payload:mood):
    #prework
    user_id = request.state.user_id
-   payload=json.dumps(payload.dict()) 
+   payload=payload.dict()
+   sex_scale_data = json.dumps({'sex_o_scale':payload['type']})
    today=date.today()
    #mood get today of self user
    query="""select * from mood where created_by_id=:created_by_id and created_at::date=:today and type=:type"""
-   values={"created_by_id":user_id,"today":today,"type":type}
+   values={"created_by_id":user_id,"today":today,"type":'sex_o_scale'}
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
@@ -68,16 +70,16 @@ async def sex_o_scale_create(request:Request,payload:mood):
    mood=row
    #mood not exist
    if mood==[]:
-      query="""insert into mood (created_by_id,type,data) values (:created_by_id,:type,json_build_object('sex_o_scale',:payload))"""
-      values={"created_by_id":user_id,"type":'sex_o_scale', "payload":payload}
+      query="""insert into mood (created_by_id,type,data) values (:created_by_id,:type,:sex_scale_data)"""
+      values={"created_by_id":user_id,"type":'sex_o_scale', "sex_scale_data":sex_scale_data}
       response=await database_execute(query,values)
       if response["status"]=="false":
          raise HTTPException(status_code=400,detail=response)
       return response
    #mood exist
    #query set
-   query="""update mood set data=json_build_object('sex_o_scale',:payload) where id=:id"""
-   values={"payload":payload,"id":mood[0]["id"]}
+   query="""update mood set data=:sex_scale_data where id=:id"""
+   values={"sex_scale_data":sex_scale_data,"id":mood[0]["id"]}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
