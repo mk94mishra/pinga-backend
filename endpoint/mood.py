@@ -88,12 +88,12 @@ async def sex_o_scale_create(request:Request,payload:mood):
 
 
 #2 mood read:self
-@router.get("/mood/read-self-last-7-days")
+@router.get("/mood/read-self")
 async def mood_read_self_last_7_days(request:Request):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from mood where created_by_id=:created_by_id order by id desc limit 7;"""
+   query="""select * from mood where created_by_id=:created_by_id order by id desc limit 15;"""
    values={"created_by_id":user_id}
    #query run
    response=await database_fetch_all(query,values)
