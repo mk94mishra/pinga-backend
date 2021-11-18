@@ -130,10 +130,11 @@ async def user_update_profile_self(request:Request,payload:user_profile):
 async def user_update_profile_self(request:Request,payload:interest):
    #prework
    user_id = request.state.user_id
-   payload=json.dumps(payload.dict())  
+   payload=payload.dict()
+   interest_data =json.dumps(payload)
    #query set
-   query="""update "user" set data=json_build_object('interest',:payload) where id=:id"""
-   values={"data":payload,"id":user_id}
+   query="""update "user" set data=:interest_data where id=:id"""
+   values={"interest_data":interest_data,"id":user_id}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
