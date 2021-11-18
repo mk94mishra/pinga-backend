@@ -15,6 +15,7 @@ class extra_type(str, Enum):
    scheme='scheme'
    helpdesk='helpdesk'
    interest='interest'
+   mood='mood'
 
 #scehema
 #1 extra:quick-guide
