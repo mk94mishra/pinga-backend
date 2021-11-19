@@ -94,7 +94,7 @@ async def form_read_all(request:Request,offset:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""select * from form limit 10 offset :offset;"""
+   query="""select * from form where is_active=true limit 10 offset :offset;"""
    values={"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
