@@ -86,6 +86,25 @@ async def blog_read_type(request:Request,blog_type:str):
    return response
 
 
+
+#3 blog read:by day
+@router.get("/blog/day/{day}")
+async def blog_read_day(request:Request,day:int):
+   #prework
+   user_id = request.state.user_id
+   #query set
+   query="""select * from blog where day=:day ;"""
+   values={"day":day}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #finally
+   response=row
+   return response
+
+
 #4 blog delete
 @router.delete("/blog/{id}")
 async def blog_delete(request:Request,id:int):
