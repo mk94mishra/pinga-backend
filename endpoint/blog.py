@@ -78,7 +78,7 @@ async def blog_create(request:Request,payload:blog,blog_id:int):
 
 
 #3 blog read:by all
-@router.get("/blog/")
+@router.get("/blog")
 async def blog_read(request:Request,offset:int):
    #prework
    user_id = request.state.user_id
