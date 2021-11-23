@@ -38,11 +38,13 @@ async def blog_create(request:Request,payload:blog):
    payload=payload.dict()
    
    #payload check
-   if payload['description']=='' and payload['link_url']=='' and payload['media_url']=='':
+   if payload['title']=='' and payload['description']=='' and payload['link_url']=='' and payload['media_url']=='':
       raise HTTPException(status_code=400,detail="description,link_url,media_url:any one is needed")
+
+   description = {'description':payload['description']}
    #query set
-   query="""insert into blog (created_by_id,description,link_url,media_type,media_thumbnail_url,media_url,type,day) values (:created_by_id,:description,:link_url,:media_type,:media_thumbnail_url,:media_url,:type,:day) returning *"""
-   values={"created_by_id":user_id,"description":payload['description'],"link_url":payload['link_url'],"media_type":payload['media_type'],"media_thumbnail_url":payload['media_thumbnail_url'],"media_url":payload['media_url'],"type":payload['type'],"day":payload['day']}
+   query="""insert into blog (created_by_id,title,link_url,media_type,media_thumbnail_url,media_url,data,type,day) values (:created_by_id,:title,:link_url,:media_type,:media_thumbnail_url,:media_url,:description,:type,:day) returning *"""
+   values={"created_by_id":user_id,"title":payload['title'],"description":description,"link_url":payload['link_url'],"media_type":payload['media_type'],"media_thumbnail_url":payload['media_thumbnail_url'],"media_url":payload['media_url'],"type":payload['type'],"day":payload['day']}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
@@ -50,6 +52,31 @@ async def blog_create(request:Request,payload:blog):
    #finally
    return response
    
+
+# update blog
+@router.put("/blog/{blog_id}")
+async def blog_create(request:Request,payload:blog,blog_id:int):
+   #prework
+   user_id = request.state.user_id
+   payload=payload.dict()
+   
+   #payload check
+   if payload['title']=='' and payload['description']=='' and payload['link_url']=='' and payload['media_url']=='':
+      raise HTTPException(status_code=400,detail="title,description,link_url,media_url:any one is needed")
+
+   description = {'description':payload['description']}
+   #query set
+   query="""update blog set title=:title, link_url=:link_url,media_type=:media_type,media_thumbnail_url=:media_thumbnail_url,media_url=:media_url,data=:description,day=:day where id=:blog_id returning *"""
+   values={"created_by_id":user_id,"title":payload['title'],"description":description,"link_url":payload['link_url'],"media_type":payload['media_type'],"media_thumbnail_url":payload['media_thumbnail_url'],"media_url":payload['media_url'],"type":payload['type'],"day":payload['day'],"blog_id":blog_id}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
+
 #3 blog read:by all
 @router.get("/blog/")
 async def blog_read(request:Request,offset:int):
