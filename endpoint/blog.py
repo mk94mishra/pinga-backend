@@ -306,6 +306,28 @@ async def blog_read(request:Request,offset:int):
    return response
 
 
+
+
+#3 blog read:by collection
+@router.get("/blog/collection/:collection")
+async def blog_read_collection(request:Request,collection:str,offset:int):
+   #prework
+   user_id = request.state.user_id
+   collection = "'%"+collection+"%'"
+   #query set
+   query="""select * from blog where data->'collection'::text like :collection limit 10 offset :offset;"""
+   values={"collection":collection,"offset":offset}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #finally
+   response=row
+   return response
+
+
+
 #3 blog read:by type
 @router.get("/blog/type/{blog_type}")
 async def blog_read_type(request:Request,blog_type:str):
