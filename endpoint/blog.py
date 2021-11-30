@@ -164,7 +164,7 @@ async def collection_create(request:Request,payload:collection):
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
-   return response
+   return response 
    
 
 
