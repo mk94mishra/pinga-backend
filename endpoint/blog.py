@@ -313,9 +313,8 @@ async def blog_read(request:Request,offset:int):
 async def blog_read_collection(request:Request,collection:str,offset:int):
    #prework
    user_id = request.state.user_id
-   collection = "'%"+collection+"%'"
    #query set
-   query="""select * from blog where data->>'collection' like :collection limit 10 offset :offset;"""
+   query="""select * from blog where data->>'collection' = :collection limit 10 offset :offset;"""
    values={"collection":collection,"offset":offset}
    print(query)
    #query run
