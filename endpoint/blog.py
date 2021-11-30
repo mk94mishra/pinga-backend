@@ -315,7 +315,7 @@ async def blog_read_collection(request:Request,collection:str,offset:int):
    user_id = request.state.user_id
    collection = "'%"+collection+"%'"
    #query set
-   query="""select * from blog where data->'collection'::text like :collection limit 10 offset :offset;"""
+   query="""select * from blog where data->'collection' like :collection limit 10 offset :offset;"""
    values={"collection":collection,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
