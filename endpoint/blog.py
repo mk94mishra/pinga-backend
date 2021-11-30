@@ -309,7 +309,7 @@ async def blog_read(request:Request,offset:int):
 
 
 #3 blog read:by collection
-@router.get("/blog/collection/:collection")
+@router.get("/blog/collection/{collection}")
 async def blog_read_collection(request:Request,collection:str,offset:int):
    #prework
    user_id = request.state.user_id
