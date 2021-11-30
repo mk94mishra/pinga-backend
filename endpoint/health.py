@@ -40,15 +40,15 @@ async def period_create(request:Request,payload:period):
    return response
 
 # put peried 
-@router.put("/period/{id}")
-async def period_update(request:Request,payload:period,id:int):
+@router.put("/period/{period_id}")
+async def period_update(request:Request,payload:period,period_id:int):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()
    
    #query set
-   query="""update health set start_date=:start_date, end_date=:end_date where id=:id and created_by=:created_by returning *"""
-   values={"created_by":user_id,"start_date":payload['start_date'],"end_date":payload['end_date'],"type":'period'}
+   query="""update health set start_date=:start_date, end_date=:end_date where id=:period_id and created_by=:created_by returning *"""
+   values={"created_by":user_id,"start_date":payload['start_date'],"end_date":payload['end_date'],"type":'period',"period_id":period_id}
    #query run
    response = await database_execute(query,values)
    if response["status"]=="false":

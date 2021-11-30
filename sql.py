@@ -289,7 +289,8 @@ is_active BOOLEAN NOT NULL DEFAULT true,
 
 created_by_id bigint REFERENCES "user" NOT NULL,
 option_id bigint REFERENCES option NOT NULL,
-data jsonb
+data jsonb,
+ADD CONSTRAINT uq_answer UNIQUE(created_by_id, option_id)
 );
 
 
@@ -432,3 +433,8 @@ sum_score as (select sum(score) as sum_score  from question where form_id='64' a
 
 select sum_weightage.sum_weightage, max_weightage.max_weightage , sum_score.sum_score
 from sum_weightage, max_weightage, sum_score
+
+
+
+
+# view member form

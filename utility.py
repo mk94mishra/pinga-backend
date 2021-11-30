@@ -83,12 +83,12 @@ async def database_fetch_all(query,values):
 async def database_execute(query,values):
    response={"status":"false"}
    try:
-      await database.execute(query=query,values=values)
+      data = await database.execute(query=query,values=values)
       #await database.disconnect()
    except Exception as e:
       response={"status":"false","message":e.args}
       return response
-   response={"status":"true","message":"database operation successfull"}
+   response={"status":"true","message":"database operation successfull","id":data}
    return response
 
 
@@ -96,12 +96,12 @@ async def database_execute(query,values):
 async def database_execute_many(query,values):
    response={"status":"false"}
    try:
-      await database.execute_many(query=query,values=values)
+      data = await database.execute_many(query=query,values=values)
       #await database.disconnect()
    except Exception as e:
       response={"status":"false","message":e.args}
       return response
-   response={"status":"true","message":"database operation successfull"}
+   response={"status":"true","message":"database operation successfull","id":data}
    return response
 
    

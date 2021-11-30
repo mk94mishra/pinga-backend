@@ -50,7 +50,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    from answer as a 
    left join o on o.id=a.option_id
    left join q on q.id=o.question_id
-   where a.form_id=:form_id and a.created_by_id=:user_id 
+   where q.form_id=:form_id and a.created_by_id=:user_id 
    """
    values={"form_id":form_id, "user_id":user_id}
    #query run
@@ -67,18 +67,13 @@ async def answer_read(request:Request,answer_id:int,option_id:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""update answer set option_id=:option_id where id=:answer_id and created_by_id=:user_id"""
+   query="""update answer set option_id=:option_id where id=:answer_id and created_by_id=:user_id returning *"""
    values={"option_id":option_id,"answer_id":answer_id,"user_id":user_id}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    
-   #query set
-   query="""select * from answer where id=:answer_id;"""
-   values={"answer_id":answer_id}
-   #query run
-   response=await database_fetch_all(query,values)
    return response
    
 
