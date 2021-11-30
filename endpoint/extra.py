@@ -16,6 +16,7 @@ class extra_type(str, Enum):
    helpdesk='helpdesk'
    interest='interest'
    mood='mood'
+   admin='admin'
 
 #scehema
 #1 extra:quick-guide
@@ -44,6 +45,10 @@ class interest(BaseModel):
    title:str
    image:str
 
+
+#5 extra:admin
+class admin(BaseModel):
+   data:dict
 
 #endpoint
 #1 extra create:quickguide
@@ -128,6 +133,31 @@ async def extra_create_interest(request:Request,payload:interest):
       raise HTTPException(status_code=400,detail=response)
    #finally
    return response
+
+
+
+
+#3 extra create:admin
+@router.post("/extra/admin")
+async def extra_create_admin(request:Request,payload:admin):
+   #prework
+   user_id=request.state.user_id
+   payload=payload.dict()
+   payload=json.dumps(payload['data'])
+   # admin user check
+   response = await is_admin(user_id)
+   if response['status']!="true":
+      raise HTTPException(status_code=400,detail=response)
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
+   values={"created_by_id":user_id,"type":"admin","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
 
 
 #4 extra read single
@@ -235,6 +265,24 @@ async def extra_update_scheme(request:Request,id:int,payload:scheme):
    #finally
    return response
 
+
+
+#6 extra update
+@router.put("/extra/{id}/admin")
+async def extra_update_admin(request:Request,id:int,payload:admin):
+   #prework
+   user_id=request.state.user_id
+   payload=payload.dict()
+   payload = json.dumps(payload)
+   #query set
+   query="""update extra set data=:data where id=:id"""
+   values={"id":id,"data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
 
 
 #9 extra:delete
