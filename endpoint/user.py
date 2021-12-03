@@ -242,6 +242,8 @@ async def user_get_single(request:Request,id:int):
    response=row
    return response 
   
+
+  
 #9 user search by mobile: by admin
 @router.get("/user/search-by-mobile/")
 async def user_search_by_mobile(request:Request,mobile:str):

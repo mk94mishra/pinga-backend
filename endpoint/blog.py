@@ -334,7 +334,7 @@ async def blog_read_collection_category(request:Request,offset:int):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select data->>'collection' as collection_list from blog group by data->'collection', data limit 20 offset :offset;"""
+   query="""select ARRAY_AGG(data->>'collection') as collection_list from blog group by data->'collection', data limit 20 offset :offset;"""
    values={"offset":offset}
    print(query)
    #query run

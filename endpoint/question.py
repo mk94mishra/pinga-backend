@@ -133,6 +133,8 @@ async def question_delete(request:Request,id:int):
    #query set
    query="""DELETE FROM option WHERE question_id=:id"""
    values={"id":id}
+   await database_execute(query,values)
+   
    #query set
    query="""DELETE FROM question WHERE id=:id OR parent_question_id=:id"""
    values={"id":id}

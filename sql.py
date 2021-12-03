@@ -231,6 +231,8 @@ media_type VARCHAR (10),
 media_thumbnail_url VARCHAR (500),
 media_url VARCHAR (500),
 language VARCHAR (50) NOT NULL,
+type VARCHAR (50),
+next VARCHAR (100),
 
 data jsonb
 );
