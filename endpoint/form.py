@@ -23,7 +23,7 @@ class form(BaseModel):
    title:str
    description:Optional[str] = None
    media_url:Optional[str] = None
-   language:Optional[language] = 'english'
+   language:Optional[language]
    type:Optional[str] = None
    next:Optional[str] = None
    
