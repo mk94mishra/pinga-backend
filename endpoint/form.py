@@ -43,7 +43,7 @@ async def form_create(request:Request,payload:form):
    if response['status']!="true":
       raise HTTPException(status_code=400,detail=response)
    #query sey
-   query="""insert into form (created_by_id,title,description,media_url,language, type, next) values (:created_by_id,:title,:description,:media_url,:language,:type,:next)"""
+   query="""insert into form (created_by_id,title,description,media_url,language, type, next) values (:created_by_id,:title,:description,:media_url,:language,:type,:next) returning *"""
    values={"created_by_id":user_id,"title":payload['title'],"description":payload['description'],"media_url":payload['media_url'],"language":payload['language'],"type":payload['type'],"next":payload['next']}
    #query run
    response=await database_execute(query,values)
@@ -77,7 +77,7 @@ async def form_read_language(request:Request,language:str,offset:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""select * from form where is_active=true and language =:language limit 10 offset :offset;"""
+   query="""select * from form where is_active=true and language =:language limit 100 offset :offset;"""
    values={"language":language,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
@@ -96,7 +96,7 @@ async def form_read_all(request:Request,offset:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""select * from form where is_active=true and type='form' limit 10 offset :offset;"""
+   query="""select * from form where is_active=true and type='form' limit 100 offset :offset;"""
    values={"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
@@ -110,12 +110,12 @@ async def form_read_all(request:Request,offset:int):
 
 
 #4 form read all games
-@router.get("/form/game")
+@router.get("/form-game")
 async def form_game_read_all(request:Request,offset:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""select * from form where is_active=true and type='game' limit 10 offset :offset;"""
+   query="""select * from form where is_active=true and type='game' limit 100 offset :offset;"""
    values={"offset":offset}
    #query run
    response=await database_fetch_all(query,values)

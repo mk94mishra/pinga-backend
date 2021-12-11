@@ -149,7 +149,7 @@ async def extra_create_admin(request:Request,payload:admin):
    if response['status']!="true":
       raise HTTPException(status_code=400,detail=response)
    #query set
-   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
    values={"created_by_id":user_id,"type":"admin","data":payload}
    #query run
    response=await database_execute(query,values)
@@ -275,7 +275,7 @@ async def extra_update_admin(request:Request,id:int,payload:admin):
    payload=payload.dict()
    payload = json.dumps(payload)
    #query set
-   query="""update extra set data=:data where id=:id"""
+   query="""update extra set data=:data where id=:id returning *"""
    values={"id":id,"data":payload}
    #query run
    response=await database_execute(query,values)

@@ -45,7 +45,7 @@ async def question_create(request:Request,payload:question):
    
    unique_uuid = str(uuid.uuid1())
    #query set
-   query="""insert into question (created_by_id,form_id,title,media_type,media_url,media_thumbnail_url,parent_question_id,parent_option_id,score,weightage,unique_uuid) values (:created_by_id,:form_id,:title,:media_type,:media_url,:media_thumbnail_url,:parent_question_id,:parent_option_id,:score,:weightage,:unique_uuid)"""
+   query="""insert into question (created_by_id,form_id,title,media_type,media_url,media_thumbnail_url,parent_question_id,parent_option_id,score,weightage,unique_uuid) values (:created_by_id,:form_id,:title,:media_type,:media_url,:media_thumbnail_url,:parent_question_id,:parent_option_id,:score,:weightage,:unique_uuid) returning *"""
    values={"created_by_id":user_id,"form_id":payload['form_id'],"title":payload['title'],"media_type":payload['media_type'],"media_url":payload['media_url'],"media_thumbnail_url":payload['media_thumbnail_url'],"parent_question_id":payload['parent_question_id'],"parent_option_id":payload['parent_option_id'],"score":payload['score'],"weightage":payload['weightage'],"unique_uuid":unique_uuid}
    
    #query run
