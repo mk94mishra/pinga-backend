@@ -32,6 +32,9 @@ class gender(str, Enum):
 class user_login(BaseModel):
    mobile:str
    password:str
+class user_login_google_auth(BaseModel):
+   google_auth:str
+   email:Optional[str]=None
 #2 user update:profile
 class user_profile(BaseModel):
    name:str
@@ -106,6 +109,37 @@ async def user_login_non_admin(request:Request,payload:user_login):
       return response
    response = {'id':user['id'],'token': token,'next':"app homepage"}
    return response
+
+
+
+#2 user login:non admin
+@router.post("/user/login-non-admin-google-auth")
+async def user_login_non_admin(request:Request,payload:user_login_google_auth):
+   #prework
+   payload=payload.dict()   
+   #query set
+   query="""select * from "user" where google_auth=:google_auth"""
+   values={"google_auth":payload['google_auth']}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #pick first element
+   user=row[0]
+   #admin check
+   # if user['type']=="admin":
+   #    raise HTTPException(status_code=400,detail="you are an admin")
+   #token create 
+   token = token_create(user['id'])
+   #finally
+   if user['name']==None:
+      response = {'id':user['id'],'token': token,'next endpoint':"profile update"}
+      return response
+   response = {'id':user['id'],'token': token,'next':"app homepage"}
+   return response
+
+
 
 #3 user profile update:self
 @router.put("/user/profile-update-self")
@@ -290,18 +324,16 @@ async def public_user_signup_normal(request:Request,payload:user_login):
 
 #10 user create: by self
 @router.post("/user/signup-google")
-async def public_user_signup_google(request:Request,payload:user_login):
+async def public_user_signup_google(request:Request,payload:user_login_google_auth):
    #prework
    payload=payload.dict()
-   payload["mobile"]=payload["mobile"].lower()
-   payload["password"]=hashlib.md5(payload['password'].encode()).hexdigest()
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
    
    #query set
-   query="""insert into "user" (created_by,type,mobile,password) values (:created_by,:type,:mobile,:password) returning *;"""
-   values={"created_by":1,"type":"normal","mobile":payload['mobile'],"password":payload['password']}
+   query="""insert into "user" (created_by,type,google_auth,email) values (:created_by,:type,:google_auth,:email) returning *;"""
+   values={"created_by":1,"type":"normal","google_auth":payload['google_auth'],"email":payload['email']}
    #query run
    response=await database_execute(query,values)
    #query fail
