@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional, List
 from enum import Enum, IntEnum
+import random
 
 router=APIRouter(tags=["user"])
 
@@ -330,16 +331,18 @@ async def public_user_signup_google(request:Request,payload:user_login_google_au
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
-   
+   mobile = str(random.randrange(20, 50, 3)) + "test"
+   password = str(random.randrange(20, 50, 3)) + "test"
+   print(mobile)
    #query set
-   query="""insert into "user" (created_by,type,google_auth,email) values (:created_by,:type,:google_auth,:email) returning *;"""
-   values={"created_by":1,"type":"normal","google_auth":payload['google_auth'],"email":payload['email']}
+   query="""insert into "user" (created_by,type,mobile,password,google_auth,email) values (:created_by,:type,:mobile,:password,:google_auth,:email) returning *;"""
+   values={"created_by":1,"type":"normal","mobile":mobile,"password":password,"google_auth":payload['google_auth'],"email":payload['email']}
    #query run
    response=await database_execute(query,values)
    #query fail
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
-   response["next"]="login-non-admin"
+   response["next"]="login-non-admin-google-auth"
    return response
    

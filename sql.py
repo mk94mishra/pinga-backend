@@ -11,7 +11,7 @@ is_active BOOLEAN NOT NULL DEFAULT true,
 created_by bigint NOT NULL,
 
 type VARCHAR (100) NOT NULL,
-mobile VARCHAR (10) UNIQUE ,
+mobile VARCHAR (10) UNIQUE NOT NULL,
 password VARCHAR (50) NOT NULL,
 google_auth VARCHAR (100) UNIQUE,
 name VARCHAR(50),
