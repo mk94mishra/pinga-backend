@@ -114,7 +114,7 @@ async def user_login_non_admin(request:Request,payload:user_login):
 
 
 #2 user login:non admin
-@router.post("/user/login-non-admin-google-auth")
+@router.post("/user/login-non-admin-google")
 async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    #prework
    payload=payload.dict()   
