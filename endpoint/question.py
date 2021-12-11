@@ -111,8 +111,8 @@ async def question_put(request:Request,payload:question,question_id:int):
       raise HTTPException(status_code=400,detail=response)
    
    #query set
-   query="""update question set title=:title, media_type=:media_type, media_url=:media_url,media_thumbnail_url=:media_thumbnail_url,parent_question_id=:parent_question_id,:parent_option_id,score=:score,weightage=:weightage where id=:question_id"""
-   values={"title":payload['title'],"media_type":payload['media_type'],"media_url":payload['media_url'],"media_thumbnail_url":payload['media_thumbnail_url'],"parent_question_id":payload['parent_question_id'],"parent_option_id":payload['parent_option_id'],"score":payload['score'],"weightage":payload['weightage'],"question_id":payload['question_id']}
+   query="""update question set title=:title, media_type=:media_type, media_url=:media_url,media_thumbnail_url=:media_thumbnail_url,parent_question_id=:parent_question_id,parent_option_id=:parent_option_id,score=:score,weightage=:weightage where id=:question_id"""
+   values={"title":payload['title'],"media_type":payload['media_type'],"media_url":payload['media_url'],"media_thumbnail_url":payload['media_thumbnail_url'],"parent_question_id":payload['parent_question_id'],"parent_option_id":payload['parent_option_id'],"score":payload['score'],"weightage":payload['weightage'],"question_id":question_id}
    
    #query run
    response = await database_execute(query,values)
