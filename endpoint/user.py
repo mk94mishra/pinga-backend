@@ -286,3 +286,28 @@ async def public_user_signup_normal(request:Request,payload:user_login):
    response["next"]="login-non-admin"
    return response
    
+
+
+#10 user create: by self
+@router.post("/user/signup-google")
+async def public_user_signup_google(request:Request,payload:user_login):
+   #prework
+   payload=payload.dict()
+   payload["mobile"]=payload["mobile"].lower()
+   payload["password"]=hashlib.md5(payload['password'].encode()).hexdigest()
+   #check null value
+   if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
+      raise HTTPException(status_code=400,detail="null or white space not allowed")
+   
+   #query set
+   query="""insert into "user" (created_by,type,mobile,password) values (:created_by,:type,:mobile,:password) returning *;"""
+   values={"created_by":1,"type":"normal","mobile":payload['mobile'],"password":payload['password']}
+   #query run
+   response=await database_execute(query,values)
+   #query fail
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   response["next"]="login-non-admin"
+   return response
+   

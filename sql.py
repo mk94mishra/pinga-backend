@@ -260,6 +260,7 @@ multiple_choice BOOLEAN,
 score INT,
 weightage INT,
 unique_uuid VARCHAR (100) UNIQUE,
+type VARCHAR (50),
 data jsonb
 );
 
