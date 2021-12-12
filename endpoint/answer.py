@@ -11,7 +11,7 @@ router=APIRouter(tags=["answer"])
 #scehema
 #1 answer
 class answer(BaseModel):
-   option_id:int
+   option_id:list
 
 
 #1 answer create
@@ -23,8 +23,13 @@ async def answer_create(request:Request,payload:answer):
    #query set
    query="""insert into answer (created_by_id,option_id) values (:created_by_id,:option_id) returning *"""
    values={"created_by_id":user_id,"option_id":payload['option_id']}
+
+   values_list = []
+   for o_id in payload['option_id']:
+      values_list.append({"created_by_id": user_id, "option_id": o_id})
+   values = values_list
    #query run
-   response=await database_execute(query,values)
+   response=await database_execute_many(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    #finally
