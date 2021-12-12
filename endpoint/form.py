@@ -77,7 +77,7 @@ async def form_read_language(request:Request,language:str,offset:int):
    #prework
    user_id=request.state.user_id
    #query set
-   query="""select * from form where is_active=true and language =:language limit 100 offset :offset;"""
+   query="""select * from form where is_active=true and type='form' and language =:language limit 100 offset :offset;"""
    values={"language":language,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
