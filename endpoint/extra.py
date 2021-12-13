@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 from setting import *
 from utility import *
 from pydantic import BaseModel
+from typing import Optional, List
 from datetime import date
 from enum import Enum, IntEnum
 import json
@@ -43,7 +44,7 @@ class helpdesk(BaseModel):
 #4 extra:interest
 class interest(BaseModel):
    title:str
-   image:str
+   image:Optional[str]=None
 
 
 #5 extra:admin
