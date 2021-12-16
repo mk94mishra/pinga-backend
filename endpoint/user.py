@@ -43,6 +43,8 @@ class user_profile(BaseModel):
    gender:gender
    dob:date
    profile_pic_url:str
+   height:str
+   weight:str
    tnc_accepted:bool
 #3 user:create
 class user_create(BaseModel):
@@ -149,8 +151,8 @@ async def user_update_profile_self(request:Request,payload:user_profile):
    user_id = request.state.user_id
    payload=payload.dict()   
    #query set
-   query="""update "user" set name=:name,email=:email,gender=:gender,dob=:dob,profile_pic_url=:profile_pic_url,tnc_accepted=:tnc_accepted where id=:id"""
-   values={"name":payload['name'],"email":payload['email'],"gender":payload['gender'],"dob":payload['dob'], "profile_pic_url":payload['profile_pic_url'],"tnc_accepted":payload["tnc_accepted"],"id":user_id}
+   query="""update "user" set name=:name,email=:email,gender=:gender,dob=:dob,profile_pic_url=:profile_pic_url,weight=:weight,height=:height,tnc_accepted=:tnc_accepted where id=:id"""
+   values={"name":payload['name'],"email":payload['email'],"gender":payload['gender'],"dob":payload['dob'], "profile_pic_url":payload['profile_pic_url'],"weight":payload['weight'],"height":payload['height'],"tnc_accepted":payload["tnc_accepted"],"id":user_id}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":

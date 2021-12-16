@@ -19,6 +19,8 @@ email VARCHAR (100) UNIQUE,
 gender VARCHAR(50),
 dob date,
 profile_pic_url VARCHAR (500),
+weight  VARCHAR (10),
+height  VARCHAR (10),
 tnc_accepted boolean,
 
 data jsonb
@@ -440,4 +442,9 @@ from sum_weightage, max_weightage, sum_score
 
 
 
-# view member form
+# view collection list
+
+create view view_collection_list as
+select distinct data->'collection'::text as interest from blog  
+where type='collection' and data->'collection'::text != '""' 
+group by data->'collection'::text

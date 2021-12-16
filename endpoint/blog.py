@@ -309,19 +309,29 @@ async def blog_read(request:Request,offset:int):
 
 
 #3 blog read:by collection
-@router.get("/blog/collection/{collection}")
-async def blog_read_collection(request:Request,collection:str,offset:int):
+@router.get("/blog/collection")
+async def blog_read_collection(request:Request,offset:int):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from blog where data->>'collection' = :collection limit 10 offset :offset;"""
-   values={"collection":collection,"offset":offset}
-   print(query)
+   query="""select b.* from blog as b where b.data->>'collection' IN (select * from jsonb_array_elements_text((select data->'interest' as interest from "user" where id=:user_id))) limit 10 offset :offset;"""
+   values={"user_id":user_id,"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    row=response["message"]
+   #------------
+   if response["message"] == []:
+      #query set
+      query="""select * from blog  where type='collection' limit 10 offset :offset;"""
+      values={"offset":offset}
+      #query run
+      response=await database_fetch_all(query,values)
+      if response["status"]=="false":
+         raise HTTPException(status_code=400,detail=response)
+      row=response["message"]
+
    #finally
    response=row
    return response
@@ -334,7 +344,7 @@ async def blog_read_collection_category(request:Request,offset:int):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select ARRAY_AGG(data->>'collection') as collection_list from blog group by data->'collection', data limit 20 offset :offset;"""
+   query="""select ARRAY_AGG(interest::text) as collection_list from view_collection_list limit 200 offset :offset;"""
    values={"offset":offset}
    print(query)
    #query run
