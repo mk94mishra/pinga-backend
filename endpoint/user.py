@@ -104,7 +104,7 @@ async def user_login_non_admin(request:Request,payload:user_login):
    if response["message"] == []:
       response["status"]=="false"
       response = {'status':"false",'message': "wrong credentials"}
-      return response
+      raise HTTPException(status_code=400,detail=response)
    user=row[0]
    #admin check
    # if user['type']=="admin":
@@ -126,14 +126,18 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    #prework
    payload=payload.dict()   
    #query set
-   query="""select * from "user" where google_auth=:google_auth"""
-   values={"google_auth":payload['google_auth']}
+   query="""select * from "user" where google_auth=:google_auth and email=:email"""
+   values={"google_auth":payload['google_auth'],"email":payload['email']}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    row=response["message"]
    #pick first element
+   if response["message"] == []:
+      response["status"]=="false"
+      response = {'status':"false",'message': "wrong credentials"}
+      raise HTTPException(status_code=400,detail=response)
    user=row[0]
    #admin check
    # if user['type']=="admin":
