@@ -6,6 +6,7 @@ from datetime import date
 from typing import Optional, List
 from enum import Enum, IntEnum
 import random
+import uuid
 
 router=APIRouter(tags=["user"])
 
@@ -342,7 +343,7 @@ async def public_user_signup_google(request:Request,payload:user_login_google_au
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
-   mobile = str(random.randrange(20, 50, 3)) + "test"
+   mobile = str(uuid.uuid1()) + "test"
    password = str(random.randrange(20, 50, 3)) + "test"
    print(mobile)
    #query set
