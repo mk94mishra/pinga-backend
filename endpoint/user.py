@@ -100,6 +100,11 @@ async def user_login_non_admin(request:Request,payload:user_login):
       raise HTTPException(status_code=400,detail=response)
    row=response["message"]
    #pick first element
+   print(response["message"])
+   if response["message"] == []:
+      response["status"]=="false"
+      response = {'status':"false",'message': "wrong credentials"}
+      return response
    user=row[0]
    #admin check
    # if user['type']=="admin":
