@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
-router=APIRouter(tags=["issue"])
+router=APIRouter(tags=["subscribe"])
 
 
 #scehema
