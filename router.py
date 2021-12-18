@@ -17,6 +17,10 @@ project.include_router(task_router)
 from endpoint.issue import router as issue_router
 project.include_router(issue_router)
 
+#subscribe router
+from endpoint.subscribe import router as subscribe_router
+project.include_router(subscribe_router)
+
 #post router
 from endpoint.post import router as post_router
 project.include_router(post_router)

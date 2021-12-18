@@ -146,6 +146,21 @@ on i.created_by_id=u.id
 order by i.id desc
 );
 
+# subscribe
+
+CREATE TABLE subscribe (
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+is_active BOOLEAN NOT NULL DEFAULT true,
+
+created_by_id bigint REFERENCES "user" NOT NULL,
+
+type VARCHAR (50),
+email VARCHAR (100),
+mobile VARCHAR (20),
+
+data jsonb
+);
 
 #6 extra
 CREATE TABLE extra (
