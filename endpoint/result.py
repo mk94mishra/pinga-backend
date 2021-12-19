@@ -19,7 +19,7 @@ async def result_read(request:Request,user_id:int,form_id:int):
 
          sum_score as (select sum(score) as sum_score 
                   from question
-                  where form_id=:form_id and parent_question_id is null  
+                  where form_id=:form_id and parent_question_id='0'  
                   group by form_id),
          max_weightage as (select total_weightage as max_weightage 
                      from view_question_option where form_id=:form_id

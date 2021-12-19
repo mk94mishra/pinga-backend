@@ -42,6 +42,7 @@ async def answer_create(request:Request,payload:answer):
 async def answer_read(request:Request,user_id:int,form_id:int):
    #prework
    user_id=request.state.user_id
+   user_id = 3
    #query set
    query="""
    with
@@ -51,7 +52,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    select 
    a.*,
    q.id as question_id, q.title as question_title, q.media_type as question_media_type, q.media_url as question_media_url, q.media_thumbnail_url as question_media_thumbnail_url,
-   o.media_type as option_media_type, o.media_url as option_media_url, o.media_thumbnail_url as option_media_thumbnail_url, o.weightage as option_weightage 
+   o.title as option_title,o.media_type as option_media_type, o.media_url as option_media_url, o.media_thumbnail_url as option_media_thumbnail_url, o.weightage as option_weightage 
    from answer as a 
    left join o on o.id=a.option_id
    left join q on q.id=o.question_id
