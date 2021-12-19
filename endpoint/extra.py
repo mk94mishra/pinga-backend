@@ -18,6 +18,7 @@ class extra_type(str, Enum):
    interest='interest'
    mood='mood'
    admin='admin'
+   pingasm_result='pingasm_result'
 
 #scehema
 #1 extra:quick-guide
