@@ -83,3 +83,38 @@ async def answer_read(request:Request,answer_id:int,option_id:int):
    
 
 
+
+#3 answer delete
+@router.delete("/answer/user/{user_id}/form/{form_id}")
+async def answer_read(request:Request,user_id:int,form_id:int):
+   #prework
+   user_id=request.state.user_id
+   #query set
+   query="""with 
+      q as (select * from question),
+      o as (select * from "option")
+      select ARRAY_AGG(a.id)
+      from answer as a
+      left join o on o.id=a.option_id
+      left join q on q.id=o.question_id
+      where a.created_by_id=:user_id and q.form_id=:form_id"""
+   values={"user_id":user_id,"form_id":form_id}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+      
+   array_list=response['id']
+   #query set
+   query='delete from answer where id in ('+str(array_list).replace("[", "").replace("]", "")+')'
+   print(query)
+   values={}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   
+   return response
+   
+
+
