@@ -42,7 +42,6 @@ async def answer_create(request:Request,payload:answer):
 async def answer_read(request:Request,user_id:int,form_id:int):
    #prework
    user_id=request.state.user_id
-   user_id = 3
    #query set
    query="""
    with
