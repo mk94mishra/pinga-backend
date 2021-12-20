@@ -4,6 +4,7 @@ from utility import *
 from pydantic import BaseModel
 from datetime import date
 from enum import Enum, IntEnum
+from typing import Optional, List
 
 router=APIRouter(tags=["blog"])
 
@@ -21,10 +22,10 @@ class media_type(str, Enum):
 class period(BaseModel):
    title:str
    description: str
-   link_url:str
-   media_type:media_type
-   media_thumbnail_url:str
-   media_url:str
+   link_url:Optional[str]=None
+   media_type:Optional[str]=None
+   media_thumbnail_url:Optional[str]=None
+   media_url:Optional[str]=None
    day:int
 
 
@@ -192,8 +193,8 @@ async def blog_period_update(request:Request,payload:period,blog_id:int):
 
 
 # update blog: harmonometer
-@router.put("/blog/harmonometer/{blog_id}")
-async def blog_harmonometer_update(request:Request,payload:period,blog_id:int):
+@router.put("/blog/hormonometer/{blog_id}")
+async def blog_hormonometer_update(request:Request,payload:period,blog_id:int):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()

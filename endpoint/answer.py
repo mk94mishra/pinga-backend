@@ -1,10 +1,11 @@
+from typing import Optional
 from fastapi import APIRouter, Request, HTTPException
 from setting import *
 from utility import *
 from pydantic import BaseModel
 from datetime import date
 from enum import Enum, IntEnum
-import uuid
+from typing import Optional
 
 router=APIRouter(tags=["answer"])
 
@@ -12,6 +13,7 @@ router=APIRouter(tags=["answer"])
 #1 answer
 class answer(BaseModel):
    option_id:list
+   scale:Optional[float]
 
 
 #1 answer create
@@ -20,13 +22,14 @@ async def answer_create(request:Request,payload:answer):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()
+   scale = json.dumps({"scale":payload['scale']})
    #query set
-   query="""insert into answer (created_by_id,option_id) values (:created_by_id,:option_id) returning *"""
-   values={"created_by_id":user_id,"option_id":payload['option_id']}
+   query="""insert into answer (created_by_id,option_id,data) values (:created_by_id,:option_id,:data) returning *"""
+   # values={"created_by_id":user_id,"option_id":payload['option_id']}
 
    values_list = []
    for o_id in payload['option_id']:
-      values_list.append({"created_by_id": user_id, "option_id": o_id})
+      values_list.append({"created_by_id": user_id, "option_id": o_id, "data":scale})
    values = values_list
    #query run
    response=await database_execute_many(query,values)
@@ -51,7 +54,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    select 
    a.*,
    q.id as question_id, q.title as question_title, q.media_type as question_media_type, q.media_url as question_media_url, q.media_thumbnail_url as question_media_thumbnail_url,
-   o.title as option_title,o.media_type as option_media_type, o.media_url as option_media_url, o.media_thumbnail_url as option_media_thumbnail_url, o.weightage as option_weightage 
+   o.title as option_title,o.media_type as option_media_type, o.media_url as option_media_url, o.media_thumbnail_url as option_media_thumbnail_url, o.data as option_data, o.weightage as option_weightage 
    from answer as a 
    left join o on o.id=a.option_id
    left join q on q.id=o.question_id
