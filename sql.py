@@ -27,6 +27,17 @@ data jsonb
 );
 
 
+# otp
+CREATE TABLE otp(
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+is_active BOOLEAN NOT NULL DEFAULT true,
+
+mobile VARCHAR (20),
+email VARCHAR (100),
+otp VARCHAR (20)
+);
+
 #2 post
 CREATE TABLE post(
 id BIGSERIAL PRIMARY KEY NOT NULL,

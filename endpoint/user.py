@@ -7,6 +7,7 @@ from typing import Optional, List
 from enum import Enum, IntEnum
 import random
 import uuid
+from sms import *
 
 router=APIRouter(tags=["user"])
 
@@ -37,6 +38,15 @@ class user_login(BaseModel):
 class user_login_google_auth(BaseModel):
    google_auth:str
    email:Optional[str]=None
+class login_otp(BaseModel):
+   otp:str
+   password:str
+   email:Optional[str]=None
+   mobile:Optional[str]=None
+class reset_login_otp(BaseModel):
+   email:Optional[str]=None
+   mobile:Optional[str]=None
+
 #2 user update:profile
 class user_profile(BaseModel):
    name:str
@@ -358,3 +368,66 @@ async def public_user_signup_google(request:Request,payload:user_login_google_au
    response["next"]="login-non-admin-google-auth"
    return response
    
+
+
+@router.post("/user/create-password-reset-otp")
+async def user_password_reset_create(request:Request,payload:reset_login_otp):
+   #prework
+   payload=payload.dict()
+   
+   new_otp = str(random.randint(1111,9999))
+   sms_text = "OTP for PINGA password reset is "+new_otp+". Do not share it with anyone."
+   try:
+      sms_response=sendSMS(payload['mobile'], sms_text)
+      sms_response=dict(json.loads(sms_response.decode()))
+      print(sms_response['status'])
+      if sms_response['status'] != 'success':
+         response = {"status":"failed", "message":"otp not sent!"}
+         raise HTTPException(status_code=400,detail=response)
+      #query set
+      query="""insert into otp (mobile,email,otp) values (:mobile,:email,:otp);"""
+      values={"mobile":payload['mobile'],"email":payload['email'],"otp":new_otp}
+      #query run
+      response=await database_execute(query,values)
+      #query fail
+      if response["status"]=="false":
+         raise HTTPException(status_code=400,detail=response)
+      #finally
+      response = {"status":"success", "message":"otp sent!","next":"verify-password-reset-otp"}
+      return response
+   except:
+      response = {"status":"false", "message":"otp not sent!"}
+      raise HTTPException(status_code=400,detail=response)
+   
+
+
+@router.post("/user/verify-password-reset-otp")
+async def user_password_reset_create(request:Request,payload:login_otp):
+   #prework
+   payload=payload.dict()
+   #query set
+   query="""select  AGE(NOW(),created_at)::text AS difference  from otp where mobile=:mobile and otp=:otp order by id desc limit 1"""
+   values={"mobile":payload['mobile'],"otp":payload['otp']}
+   
+   #query run
+   response=await database_fetch_all(query,values)
+
+   if response["message"] == []:
+      response = {"status":"false", "message":"otp not verified!"}
+      raise HTTPException(status_code=400,detail=response)
+   
+   diffrence = response["message"][0]['difference'].split(':')
+   if int(diffrence[1])>=50:
+      response = {"status":"false", "message":"otp expired!"}
+      raise HTTPException(status_code=400,detail=response)
+      
+   password_hash=password_hash_create(payload['password'])
+   query="""update "user" set password=:password where mobile=:mobile"""
+   values={"password":password_hash,"mobile":payload['mobile']}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   response = {"status":"success", "message":"password reset succesfully!"}
+   return response
