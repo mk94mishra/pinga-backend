@@ -13,7 +13,7 @@ router=APIRouter(tags=["answer"])
 #1 answer
 class answer(BaseModel):
    option_id:list
-   scale:Optional[float]
+   scale:list
 
 
 #1 answer create
@@ -22,13 +22,15 @@ async def answer_create(request:Request,payload:answer):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()
-   scale = json.dumps({"scale":payload['scale']})
    #query set
    query="""insert into answer (created_by_id,option_id,data) values (:created_by_id,:option_id,:data) returning *"""
    # values={"created_by_id":user_id,"option_id":payload['option_id']}
 
    values_list = []
+   i=0
    for o_id in payload['option_id']:
+      scale = json.dumps({"scale":payload['scale'][i]})
+      i = i + 1
       values_list.append({"created_by_id": user_id, "option_id": o_id, "data":scale})
    values = values_list
    #query run
