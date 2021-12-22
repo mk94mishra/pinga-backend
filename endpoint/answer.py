@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, HTTPException
 from setting import *
 from utility import *
 from pydantic import BaseModel
-from datetime import date
+import datetime
 from enum import Enum, IntEnum
 from typing import Optional
 
@@ -113,8 +113,9 @@ async def answer_read(request:Request,user_id:int,form_id:int):
       
    array_list=response['id']
    #query set
+   current_time = str(datetime.datetime.now())
    array_list = str(array_list).replace("[", "").replace("]", "")
-   query="update answer set flag_date=NOW(), flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
+   query="update answer set flag_date="+current_time+", flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
    print(query)
    values={}
    #query run
