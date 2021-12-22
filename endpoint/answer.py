@@ -110,7 +110,11 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
-   # array_list=response['id']
+   
+   if response["message"][0]['id'] == None:
+      response = {'status':"success",'message': "don't have prev. answers!"}
+      return response
+
    array_list = response["message"][0]['id']
    #query set
    current_time = str(datetime.datetime.now())
