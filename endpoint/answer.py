@@ -115,7 +115,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    #query set
    current_time = str(datetime.datetime.now())
    array_list = str(array_list).replace("[", "").replace("]", "")
-   query="update answer set flag_date="+current_time+", flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
+   query="update answer set flag_date='"+current_time+"', flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
    print(query)
    values={}
    #query run
