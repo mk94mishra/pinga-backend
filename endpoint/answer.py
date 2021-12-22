@@ -95,26 +95,29 @@ async def answer_read(request:Request,answer_id:int,option_id:int):
 @router.delete("/answer/user/{user_id}/form/{form_id}")
 async def answer_read(request:Request,user_id:int,form_id:int):
    #prework
-   user_id=request.state.user_id
+   # user_id=request.state.user_id
    #query set
    query="""with 
       q as (select * from question),
       o as (select * from "option")
-      select ARRAY_AGG(a.id)
+      select ARRAY_AGG(a.id) as id
       from answer as a
       left join o on o.id=a.option_id
       left join q on q.id=o.question_id
       where a.created_by_id=:user_id and q.form_id=:form_id and a.flag is null"""
    values={"user_id":user_id,"form_id":form_id}
    #query run
-   response=await database_execute(query,values)
+   response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
-      
-   array_list=response['id']
+   print(response["message"])
+   # array_list=response['id']
+   array_list = response["message"][0]['id']
    #query set
    current_time = str(datetime.datetime.now())
+   print(current_time)
    array_list = str(array_list).replace("[", "").replace("]", "")
+   
    query="update answer set flag_date='"+current_time+"', flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
    print(query)
    values={}
