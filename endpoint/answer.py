@@ -104,7 +104,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
       from answer as a
       left join o on o.id=a.option_id
       left join q on q.id=o.question_id
-      where a.created_by_id=:user_id and q.form_id=:form_id"""
+      where a.created_by_id=:user_id and q.form_id=:form_id and a.flag is null"""
    values={"user_id":user_id,"form_id":form_id}
    #query run
    response=await database_execute(query,values)
