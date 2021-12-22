@@ -29,7 +29,9 @@ async def answer_create(request:Request,payload:answer):
    values_list = []
    i=0
    for o_id in payload['option_id']:
-      scale = json.dumps({"scale":payload['scale'][i]})
+      scale = json.dumps({"scale":""})
+      if payload['scale']:
+         scale = json.dumps({"scale":payload['scale'][i]})
       i = i + 1
       values_list.append({"created_by_id": user_id, "option_id": o_id, "data":scale})
    values = values_list
