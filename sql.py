@@ -374,7 +374,7 @@ q1 as (select q.form_id as form_id, q.id as q1_id ,q.title as q1_title ,q.score 
 	o.id as q1_o_id, o.title as q1_o_title,o.weightage as q1_o_weightage
 	from question as   q 
 	left join "option" as  o on o.question_id=q.id
-	where q.parent_question_id='0' and q.parent_option_id='0' and q.is_active='true'),
+	where q.parent_question_id is null and q.parent_option_id is null and q.is_active='true'),
 
 
 q2 as (select q1.*, 
