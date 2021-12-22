@@ -62,7 +62,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
    from answer as a 
    left join o on o.id=a.option_id
    left join q on q.id=o.question_id
-   where q.form_id=:form_id and a.created_by_id=:user_id 
+   where q.form_id=:form_id and a.created_by_id=:user_id and a.flag is null
    """
    values={"form_id":form_id, "user_id":user_id}
    #query run
@@ -113,7 +113,8 @@ async def answer_read(request:Request,user_id:int,form_id:int):
       
    array_list=response['id']
    #query set
-   query='delete from answer where id in ('+str(array_list).replace("[", "").replace("]", "")+')'
+   array_list = str(array_list).replace("[", "").replace("]", "")
+   query="update answer set flag_date=NOW(), flag='true' where id in ("+array_list+") and flag_date is null and flag is null"
    print(query)
    values={}
    #query run
