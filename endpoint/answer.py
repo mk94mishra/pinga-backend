@@ -13,7 +13,7 @@ router=APIRouter(tags=["answer"])
 #1 answer
 class answer(BaseModel):
    option_id:list
-   scale:list
+   scale:Optional[list]
 
 
 #1 answer create

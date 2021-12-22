@@ -76,7 +76,7 @@ async def question_read(request:Request,id:int):
          ARRAY_AGG(o.id) as option_id, ARRAY_AGG(o.title) as option_title, ARRAY_AGG(o.media_type) as option_media_type, ARRAY_AGG(o.media_url) as option_media_url, ARRAY_AGG(o.media_thumbnail_url) as option_media_thumbnail_url
          from question as q
          left join option as o on o.question_id=q.id
-         where q.parent_question_id is null and q.parent_option_id is null and q.form_id=:form_id
+         where q.parent_question_id is null and q.parent_option_id is null and q.form_id=:form_id and is_active='true'
          group by q.id)
 
          select q.*,
