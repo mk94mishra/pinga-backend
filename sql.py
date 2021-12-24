@@ -434,6 +434,7 @@ all_question as (select q1.* from q1
 
 select a.created_by_id as user_id ,aq.* from answer as a
 left join all_question as aq on aq.option_id=a.option_id
+where a.flag is null
 order by aq.q1_id,aq.option_id asc
 
 
