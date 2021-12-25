@@ -398,21 +398,30 @@ q4 as (select q3.*,
 	o.id as q4_o_id, o.title as q4_o_title,o.weightage as q4_o_weightage
 	from q3 
 	left join question as q4 on q4.parent_option_id=q3.q3_o_id
-	left join "option" as  o on o.question_id=q4.id)
+	left join "option" as  o on o.question_id=q4.id),
+
+q5 as (select q4.*, 
+	q5.id as q5_id ,q5.title as q5_title,
+	o.id as q5_o_id, o.title as q5_o_title,o.weightage as q5_o_weightage
+	from q4 
+	left join question as q5 on q5.parent_option_id=q4.q4_o_id
+	left join "option" as  o on o.question_id=q5.id)
 	
 select *,
 (case when q1_o_weightage is null then 1 else q1_o_weightage end)*
 (case when q2_o_weightage is null then 1 else q2_o_weightage end)*
 (case when q3_o_weightage is null then 1 else q3_o_weightage end)*
-(case when q4_o_weightage is null then 1 else q4_o_weightage end) as total_weightage,
+(case when q4_o_weightage is null then 1 else q4_o_weightage end)*
+(case when q5_o_weightage is null then 1 else q5_o_weightage end) as total_weightage,
 q1_score*
 (case when q1_o_weightage is null then 1 else q1_o_weightage end)*
 (case when q2_o_weightage is null then 1 else q2_o_weightage end)*
 (case when q3_o_weightage is null then 1 else q3_o_weightage end)*
-(case when q4_o_weightage is null then 1 else q4_o_weightage end) as final_score
+(case when q4_o_weightage is null then 1 else q4_o_weightage end)*
+(case when q5_o_weightage is null then 1 else q5_o_weightage end) as final_score
 
-from q4 
-order by form_id,q1_id,q1_o_id,q2_o_id,q3_o_id,q4_o_id asc
+from q5 
+order by form_id,q1_id,q1_o_id,q2_o_id,q3_o_id,q4_o_id,q5_o_id asc
 	
 
 
@@ -420,17 +429,20 @@ order by form_id,q1_id,q1_o_id,q2_o_id,q3_o_id,q4_o_id asc
 # view_user_answer
 create view view_user_answer as
 with 
-q1 as (select form_id, q1_id,q1_score,q1_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is null and q3_id is null and q4_id is null),
-q2 as (select form_id, q1_id,q1_score,q2_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is null and q4_id is null),
-q3 as (select form_id, q1_id,q1_score,q3_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is not null and q4_id is null),
-q4 as (select form_id, q1_id,q1_score,q4_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is not null and q4_id is not null),
+q1 as (select form_id, q1_id,q1_score,q1_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is null and q3_id is null and q4_id is null and q5_id is null),
+q2 as (select form_id, q1_id,q1_score,q2_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is null and q4_id is null and q5_id is null),
+q3 as (select form_id, q1_id,q1_score,q3_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is not null and q4_id is null and q5_id is null),
+q4 as (select form_id, q1_id,q1_score,q4_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is not null and q4_id is not null and q5_id is null),
+q5 as (select form_id, q1_id,q1_score,q4_o_id as option_id,total_weightage, final_score from view_question_option where q2_id is not null and q3_id is not null and q4_id is not null and q5_id is not null),
 all_question as (select q1.* from q1
 		union 
 		select q2.* from q2
 		union 
 		select q3.* from q3
 		union
-		select q4.* from q4)
+		select q4.* from q4
+		union
+		select q5.* from q5)
 
 select a.created_by_id as user_id ,aq.* from answer as a
 left join all_question as aq on aq.option_id=a.option_id
@@ -477,3 +489,16 @@ create view view_collection_list as
 select distinct data->'collection'::text as interest from blog  
 where type='collection' and data->'collection'::text != '""' 
 group by data->'collection'::text
+
+
+
+# user answer with score weightage 
+select 
+         a.*,
+         q.id as qid, q.title as qt, q.score, 
+         o.id,  o.title, o.weightage 
+         from answer as a 
+         left join "option" as o on o.id=a.option_id
+         left join question as q on q.id=o.question_id
+         where a.created_by_id=:user_id and flag is null and q.form_id=:form_id
+         order by q.id asc
