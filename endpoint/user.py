@@ -252,6 +252,7 @@ async def user_update_profile_self_interest(request:Request,payload:interest):
    return response
 
 
+
 #5 user login info update:self
 @router.put("/user/login-info-update-self")
 async def user_update__login_info_self(request:Request,payload:user_login):
@@ -271,6 +272,7 @@ async def user_update__login_info_self(request:Request,payload:user_login):
       raise HTTPException(status_code=400,detail=response)
    #finally
    return response
+
 
 
 #4 user read:self

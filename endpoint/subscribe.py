@@ -14,6 +14,7 @@ class subscribe(BaseModel):
    type:str
    email:Optional[str]=None
    mobile:Optional[str]=None
+   notification:Optional[list]
 
 #endpoint
 #1 subscribe create
@@ -26,8 +27,9 @@ async def subscribe_create(request:Request,payload:subscribe):
    if payload['email']=='' and payload['mobile']=='':
       raise HTTPException(status_code=400,detail="email,mobile:any one is needed")
    #query set
-   query="""insert into subscribe (created_by_id,email,mobile,type) values (:created_by_id,:email,:mobile,:type)"""
-   values={"created_by_id":user_id,"email":payload['email'],"mobile":payload['mobile'],"type":payload['type'] }
+   notification=json.dumps(payload['notification'])
+   query="""insert into subscribe (created_by_id,email,mobile,data,type) values (:created_by_id,:email,:mobile,:data,:type)"""
+   values={"created_by_id":user_id,"email":payload['email'],"mobile":payload['mobile'],"data":notification,"type":payload['type'] }
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
@@ -42,7 +44,7 @@ async def subscribe_read_user(request:Request):
    #prework
    user_id = request.state.user_id
    #query set
-   query="""select * from subscribe where created_by_id=:user_id"""
+   query="""select * from subscribe where created_by_id=:user_id order by id desc"""
    values={"user_id":user_id}
    #query run
    response=await database_fetch_all(query,values)
@@ -53,6 +55,7 @@ async def subscribe_read_user(request:Request):
    response=row
    return response
    
+
 
 #3 subscribe read all pending:self created
 @router.get("/subscribe/all")
