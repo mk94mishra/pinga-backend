@@ -285,7 +285,11 @@ async def user_read_self(request:Request):
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
-   row=response["message"]
+   row=response["message"][0]
+   if row['password']:
+      row['password'] = "already set"
+   else:
+      row['password'] = "not set"
    #finally
    response=row
    return response

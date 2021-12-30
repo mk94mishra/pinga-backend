@@ -42,6 +42,10 @@ class collection(BaseModel):
    day:int
 
 
+#2 blog: collection_category
+class collection_category(BaseModel):
+   category:Optional[str]=None
+   course_name:Optional[str]=None
 
 
 #endpoint
@@ -310,28 +314,18 @@ async def blog_read(request:Request,offset:int):
 
 
 #3 blog read:by collection
-@router.get("/blog/collection")
-async def blog_read_collection(request:Request,offset:int):
-   #prework
-   user_id = request.state.user_id
+@router.post("/blog/collection/read")
+async def blog_read_collection(request:Request,offset:int,payload:collection_category):
+   payload=payload.dict()
    #query set
-   query="""select b.* from blog as b where b.data->>'collection' IN (select * from jsonb_array_elements_text((select data->'interest' as interest from "user" where id=:user_id))) limit 10 offset :offset;"""
-   values={"user_id":user_id,"offset":offset}
+   query="select * from blog where data->>'collection'::text like '%"+payload['category']+"%' and data->>'course_name'::text like '%"+payload['course_name']+"%' limit 10 offset :offset;"
+   print(query)
+   values={"offset":offset}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
    row=response["message"]
-   #------------
-   if response["message"] == []:
-      #query set
-      query="""select * from blog  where type='collection' limit 10 offset :offset;"""
-      values={"offset":offset}
-      #query run
-      response=await database_fetch_all(query,values)
-      if response["status"]=="false":
-         raise HTTPException(status_code=400,detail=response)
-      row=response["message"]
 
    #finally
    response=row
@@ -339,7 +333,35 @@ async def blog_read_collection(request:Request,offset:int):
 
 
 
-#3 blog read:by collection
+
+#3 blog read:by collection category with cousre name
+@router.post("/blog/collection-category-course-name")
+async def blog_read_collection_category_coursename(request:Request,offset:int,payload:collection_category):   
+   payload=payload.dict()
+   #query set
+   query="""select data->'collection' as category, data->'course_name' as course_name from blog 
+   where type='collection' and data->>'collection'!=''
+   group by data->'collection', data->'course_name' limit 100 offset :offset;"""
+   values={"offset":offset}
+   if payload['category']:
+      #query set
+      query="select data->'collection' as category, data->'course_name' as course_name from blog where type='collection' and data->>'collection'::text like '%"+payload['category']+"%' group by data->'collection', data->'course_name' limit 100 offset :offset;"
+      values={"offset":offset}
+   print(query)
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #finally
+   response=row
+   return response
+
+
+
+
+
+#3 blog read:by collection-list
 @router.get("/blog/collection-list")
 async def blog_read_collection_category(request:Request,offset:int):
    #prework
@@ -356,6 +378,7 @@ async def blog_read_collection_category(request:Request,offset:int):
    #finally
    response=row
    return response
+
 
 
 
@@ -378,6 +401,7 @@ async def blog_read_type(request:Request,blog_type:str):
 
 
 
+
 #3 blog read:by day
 @router.get("/blog/day/{day}")
 async def blog_read_day(request:Request,day:int):
@@ -394,6 +418,8 @@ async def blog_read_day(request:Request,day:int):
    #finally
    response=row
    return response
+
+
 
 
 #4 blog delete
