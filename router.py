@@ -71,6 +71,12 @@ project.include_router(monitor_router)
 
 
 
+#monitor report router
+from endpoint.mylocal import router as mylocal_router
+project.include_router(mylocal_router)
+
+
+
 
 
 

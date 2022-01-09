@@ -38,6 +38,8 @@ async def subscribe_create(request:Request,payload:subscribe):
    return response
 
 
+
+
 #2 subscribe read single
 @router.get("/subscribe")
 async def subscribe_read_user(request:Request):
@@ -60,8 +62,6 @@ async def subscribe_read_user(request:Request):
 #3 subscribe read all pending:self created
 @router.get("/subscribe/all")
 async def subscribe_all(request:Request,offset:int):
-   #prework
-   user_id = request.state.user_id
    #query set
    query="""select * from subscribe limit 100 offset :offset;"""
    values={"offset":offset}
