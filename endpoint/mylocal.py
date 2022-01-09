@@ -73,7 +73,7 @@ async def mylocal_create(request:Request):
 
 
    r = message.send(to='mk94mishra@gmail.com', smtp={'host': 'pingaweb.com', 'timeout': 5})
-   assert r.status_code == 250
+   print(r)
 
-   return "rest"
+   return r
 
