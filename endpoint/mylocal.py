@@ -66,14 +66,44 @@ sql_data = [
 
 @router.get("/mylocal")
 async def mylocal_create(request:Request):
-   import emails
-   message = emails.html(html="<p>Hi!<br>Here is your receipt...",
-                           subject="Your receipt No. 567098123",
-                           mail_from=('Some Store', 'manish@pingaweb.com'))
+   # import necessary packages
+
+   from email.mime.multipart import MIMEMultipart
+   from email.mime.text import MIMEText
+   import smtplib
+   from smtplib import SMTPException
+
+   # create message object instance
+   msg = MIMEMultipart()
 
 
-   r = message.send(to='mk94mishra@gmail.com', smtp={'host': 'pingaweb.com', 'timeout': 5})
-   print(r)
+   message = "Thank you"
 
-   return r
+   # setup the parameters of the message
+   password = "BLWYNd5wGkFn9db7B5BI4wkXZ64747MiVRzpxgP4FdN4"
+   msg['From'] = "notify@pingaweb.com"
+   msg['To'] = "manish@pingaweb.com"
+   msg['Subject'] = "My Account Setup PingaWeb"
+
+   # add in the message body
+   msg.attach(MIMEText(message, 'plain'))
+
+   #create server
+   server = smtplib.SMTP('email-smtp.ap-south-1.amazonaws.com: 587')
+
+   server.starttls()
+
+   # Login Credentials for sending the mail
+   server.login('AKIA22OPN45J7UZ6INNP', password)
+
+
+   # send the message via the server.
+   # print(server.sendmail(msg['From'], msg['To'], msg.as_string()))
+   try:
+      server.sendmail(msg['From'], msg['To'], msg.as_string())         
+      print("Successfully sent email")
+   except SMTPException:
+      print(SMTPException)
+   server.quit()
+   return "fdghjgfkjchgk"
 
