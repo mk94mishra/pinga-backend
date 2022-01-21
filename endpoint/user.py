@@ -435,6 +435,21 @@ async def user_login_create(request:Request,payload:user_login_mobile_otp_auth):
    new_otp = str(random.randint(1111,9999))
    sms_text = 'PINGA login OTP is '+new_otp
    try:
+
+      #query set
+      query="""select * from "user" where mobile=:mobile"""
+      values={"mobile":payload['mobile']}
+      #query run
+      response=await database_fetch_all(query,values)
+      if response["status"]=="false":
+         raise HTTPException(status_code=400,detail=response)
+      row=response["message"]
+      #pick first element
+      if response["message"] == []:
+         response["status"]=="false"
+         response = {'status':"false",'message': "Mobile Number Not Exist!"}
+         raise HTTPException(status_code=400,detail=response)
+
       sms_response=sendSMS(payload['mobile'], sms_text)
       sms_response=dict(json.loads(sms_response.decode()))
       print(sms_response)
