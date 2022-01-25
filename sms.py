@@ -3,7 +3,7 @@
 import urllib.request
 import urllib.parse
  
-def sendSMS(numbers, message):
+async def sendSMS(numbers, message):
     apikey='NmMzMjYzNjE1NTRlNzk0YTM4NDM3NjMxNzI2YTUwNGY='
     sender='PINGAH'
     data =  urllib.parse.urlencode({'apikey': apikey, 'numbers': numbers,

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException
+from sqlalchemy.sql.elements import Null
 from setting import *
 from utility import *
 from pydantic import BaseModel
@@ -118,8 +119,7 @@ async def user_login_non_admin(request:Request,payload:user_login):
    #pick first element
    print(response["message"])
    if response["message"] == []:
-      response["status"]=="false"
-      response = {'status':"false",'message': "wrong credentials"}
+      response = {'status':"false",'message': "wrong credentials!"}
       raise HTTPException(status_code=400,detail=response)
    user=row[0]
   
@@ -148,8 +148,7 @@ async def user_login_mobile_otp_auth_non_admin(request:Request,payload:user_logi
       raise HTTPException(status_code=400,detail=response)
    row=response["message"]
    if response["message"] == []:
-      response["status"]=="false"
-      response = {'status':"false",'message': "mobile number not exist!"}
+      response = {'status':"false",'message': "Mobile number not exist!"}
       raise HTTPException(status_code=400,detail=response)
    #pick first element
    user=row[0]
@@ -198,8 +197,7 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    row=response["message"]
    #pick first element
    if response["message"] == []:
-      response["status"]=="false"
-      response = {'status':"false",'message': "wrong credentials"}
+      response = {'status':"false",'message': "wrong credentials!"}
       raise HTTPException(status_code=400,detail=response)
    user=row[0]
    #admin check
@@ -434,41 +432,41 @@ async def user_login_create(request:Request,payload:user_login_mobile_otp_auth):
    
    new_otp = str(random.randint(1111,9999))
    sms_text = 'PINGA login OTP is '+new_otp
+   
+   #query set
+   query="""select id, mobile, name from "user" where mobile=:mobile and is_active='true'"""
+   values={"mobile":payload['mobile']}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   if response["message"] == []:
+      response = {'status':"false",'message': "Mobile number not exist!"}
+      raise HTTPException(status_code=400,detail=response)
+      
    try:
-
-      #query set
-      query="""select * from "user" where mobile=:mobile"""
-      values={"mobile":payload['mobile']}
-      #query run
-      response=await database_fetch_all(query,values)
-      if response["status"]=="false":
-         raise HTTPException(status_code=400,detail=response)
-      #pick first element
-      if response["status"]=="false":
-         response = {'status':"false",'message': "Mobile Number Not Exist!"}
-         raise HTTPException(status_code=400,detail=response)
-
-      sms_response=sendSMS(payload['mobile'], sms_text)
+      sms_response=await sendSMS(payload['mobile'], sms_text)
       sms_response=dict(json.loads(sms_response.decode()))
-      print(sms_response)
       if sms_response['status'] != 'success':
          response = {"status":"failed", "message":"otp not sent!"}
          raise HTTPException(status_code=400,detail=response)
-      #query set
-      query="""insert into otp (mobile,otp) values (:mobile,:otp);"""
-      values={"mobile":payload['mobile'],"otp":new_otp}
-      #query run
-      print("response")
-      response=await database_execute(query,values)
-      #query fail
-      if response["status"]=="false":
-         raise HTTPException(status_code=400,detail=response)
-      #finally
-      response = {"status":"success", "message":"otp sent!","next":"login-mobile-otp"}
-      return response
    except:
       response = {"status":"false", "message":"otp not sent!"}
       raise HTTPException(status_code=400,detail=response)
+   
+   #query set
+   query="""insert into otp (mobile,otp) values (:mobile,:otp);"""
+   values={"mobile":payload['mobile'],"otp":new_otp}
+   #query run
+   response=await database_execute(query,values)
+   #query fail
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   response = {"status":"success", "message":"otp sent!","next":"login-mobile-otp"}
+   return response
+   
    
 
 
