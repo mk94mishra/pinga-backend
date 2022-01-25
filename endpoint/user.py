@@ -443,10 +443,8 @@ async def user_login_create(request:Request,payload:user_login_mobile_otp_auth):
       response=await database_fetch_all(query,values)
       if response["status"]=="false":
          raise HTTPException(status_code=400,detail=response)
-      row=response["message"]
       #pick first element
-      if response["message"] == []:
-         response["status"]=="false"
+      if response["status"]=="false":
          response = {'status':"false",'message': "Mobile Number Not Exist!"}
          raise HTTPException(status_code=400,detail=response)
 
