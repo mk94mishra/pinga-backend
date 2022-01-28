@@ -14,7 +14,7 @@ origins = [
     "http://localhost:8080",
     "http://localhost:3000",
 ]
-project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+project.add_middleware(CORSMiddleware,allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 print({"message":"cors middleware added"})
 
 
