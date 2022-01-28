@@ -20,7 +20,13 @@ from router import *
 #4 cors middleware add
 from fastapi.middleware.cors import CORSMiddleware
 
-origins = ["*"]
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:3000",
+]
 project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 print({"message":"cors middleware added"})
 
