@@ -8,7 +8,7 @@ from setting import config
 
 from starlette.middleware.cors import CORSMiddleware
 
-origins = ["http://127.0.0.1:3000"]
+origins = ["*"]
 
 project.add_middleware(
     CORSMiddleware,
