@@ -4,7 +4,8 @@ project = FastAPI(title = "pinga backend", version = "1.0")
 
 
 #4 cors middleware add
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 origins = [
     "http://localhost.tiangolo.com",
