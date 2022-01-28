@@ -19,10 +19,10 @@ from router import *
 
 #4 cors middleware add
 from fastapi.middleware.cors import CORSMiddleware
-def middleware_cors_add(project):
-    origins = ["*"]
-    project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
-    print({"message":"cors middleware added"})
+
+origins = ["*"]
+project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+print({"message":"cors middleware added"})
 
 
 #5 middleware request check
