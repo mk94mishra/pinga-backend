@@ -136,22 +136,9 @@ async def user_login_non_admin(request:Request,payload:user_login):
 
 #2 user login:otp mobile non admin
 @router.post("/user/login-mobile-otp")
-async def user_login_mobile_otp_auth_non_admin(request:Request,payload:user_login_mobile_otp_auth):
+async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:user_login_mobile_otp_auth):
    #prework
    payload=payload.dict()   
-   #query set
-   query="""select id, mobile, name from "user" where mobile=:mobile and is_active='true'"""
-   values={"mobile":payload['mobile']}
-   #query run
-   response=await database_fetch_all(query,values)
-   if response["status"]=="false":
-      raise HTTPException(status_code=400,detail=response)
-   row=response["message"]
-   if response["message"] == []:
-      response = {'status':"false",'message': "Mobile number not exist!"}
-      raise HTTPException(status_code=400,detail=response)
-   #pick first element
-   user=row[0]
 
    #query set
    query="""select  AGE(NOW(),created_at)::text AS difference  from otp where mobile=:mobile and otp=:otp order by id desc limit 1"""
@@ -170,7 +157,29 @@ async def user_login_mobile_otp_auth_non_admin(request:Request,payload:user_logi
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
 
+   # check user for login
+   try:
+      #query set
+      query="""select id, mobile, name from "user" where mobile=:mobile and is_active='true'"""
+      values={"mobile":payload['mobile']}
+      #query run
+      response=await database_fetch_all(query,values)
+      row=response["message"]
+      #pick first element
+      user=row[0]
    
+   except:
+      # create new user
+      payload["password"]=hashlib.md5(str(random.random()).encode()).hexdigest()
+      
+      #query set
+      query="""insert into "user" (created_by,type,mobile,password) values (:created_by,:type,:mobile,:password) returning *;"""
+      values={"created_by":1,"type":"normal","mobile":payload['mobile'],"password":payload['password']}
+      #query run
+      response=await database_execute(query,values)
+      #finally
+      user = response["id"]
+      
    #token create 
    token = token_create(user['id'])
    #finally
@@ -478,7 +487,7 @@ async def user_password_reset_create(request:Request,payload:reset_login_otp):
    new_otp = str(random.randint(1111,9999))
    sms_text = "OTP for PINGA password reset is "+new_otp+". Do not share it with anyone."
    try:
-      sms_response=sendSMS(payload['mobile'], sms_text)
+      sms_response=await sendSMS(payload['mobile'], sms_text)
       sms_response=dict(json.loads(sms_response.decode()))
       if sms_response['status'] != 'success':
          response = {"status":"failed", "message":"otp not sent!"}

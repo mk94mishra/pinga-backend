@@ -5,6 +5,13 @@ print({"message":"connected to terminal"})
 import uvicorn
 from project import project
 from setting import config
+
+
+from fastapi.middleware.cors import CORSMiddleware
+origins = ["*"]
+project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+print({"message":"cors middleware added"})
+
 if __name__ == "__main__":
     uvicorn.run("project:project",host=config['backend_server_host'], port=int(config['backend_server_port']),workers=8,http='h11',reload=True, debug=True)
 
