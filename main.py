@@ -8,8 +8,8 @@ from setting import config
 
 
 from fastapi.middleware.cors import CORSMiddleware
-origins = ["*"]
-project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+origins = config['allow_origins']
+project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=config['allow_origins'],allow_headers=config['allow_origins'])
 print({"message":"cors middleware added"})
 
 if __name__ == "__main__":
