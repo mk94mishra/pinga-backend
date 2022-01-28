@@ -3,20 +3,6 @@ from fastapi import FastAPI
 project = FastAPI(title = "pinga backend", version = "1.0")
 
 
-#2 project root end point
-from fastapi import Request
-from setting import config
-#define root endpoint
-@project.get("/")
-async def root(request:Request):   
-   response={"endpoint":"root","host":request.headers.get("host"),"project":config['project_name']}
-   return response
-
-
-#3 router add
-from router import *
-
-
 #4 cors middleware add
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,6 +15,20 @@ origins = [
 ]
 project.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 print({"message":"cors middleware added"})
+
+
+#2 project root end point
+from fastapi import Request
+from setting import config
+#define root endpoint
+@project.get("/")
+async def root(request:Request):   
+   response={"endpoint":"root","host":request.headers.get("host"),"project":config['project_name']}
+   return response
+
+
+#3 router add
+from router import *
 
 
 #5 middleware request check
