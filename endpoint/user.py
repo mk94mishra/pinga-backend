@@ -435,7 +435,7 @@ async def public_user_signup_google(request:Request,payload:user_login_google_au
 
 
 @router.post("/user/create-login-otp")
-async def user_login_create(request:Request,payload:user_login_mobile_otp_auth):
+async def user_login_otp_create(request:Request,payload:user_login_mobile_otp_auth):
    #prework
    payload=payload.dict()
    
