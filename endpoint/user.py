@@ -38,6 +38,7 @@ class user_login(BaseModel):
    password:str
 class user_login_google_auth(BaseModel):
    google_auth:str
+   google_auth_token:str
    email:Optional[str]=None
 
 class user_login_mobile_otp_auth(BaseModel):
@@ -196,22 +197,39 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
 async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    #prework
    payload=payload.dict()   
-   #query set
-   query="""select * from "user" where google_auth=:google_auth and email=:email"""
-   values={"google_auth":payload['google_auth'],"email":payload['email']}
-   #query run
-   response=await database_fetch_all(query,values)
-   if response["status"]=="false":
-      raise HTTPException(status_code=400,detail=response)
-   row=response["message"]
-   #pick first element
-   if response["message"] == []:
-      response = {'status':"false",'message': "wrong credentials!"}
-      raise HTTPException(status_code=400,detail=response)
-   user=row[0]
-   #admin check
-   # if user['type']=="admin":
-   #    raise HTTPException(status_code=400,detail="you are an admin")
+   # check google 
+   google_auth_verify = await google_auth_verification(payload['google_auth_token'],payload['email'])
+   if google_auth_verify['status'] == 'false':
+      raise HTTPException(status_code=400,detail="Email Not Match!")
+   try:
+      #query set
+      query="""select * from "user" where email=:email"""
+      values={"google_auth":payload['google_auth'],"email":payload['email']}
+      #query run
+      response=await database_fetch_all(query,values)
+      if response["status"]=="false":
+         raise HTTPException(status_code=400,detail=response)
+      row=response["message"]
+      #pick first element
+      if response["message"] == []:
+         response = {'status':"false",'message': "wrong credentials!"}
+         raise HTTPException(status_code=400,detail=response)
+      user=row[0]
+   except:
+      mobile = str(uuid.uuid1()) + "test"
+      password = str(random.randrange(20, 50, 3)) + "test"
+      #query set
+      query="""insert into "user" (created_by,type,mobile,password,google_auth,email) values (:created_by,:type,:mobile,:password,:google_auth,:email) returning *;"""
+      values={"created_by":1,"type":"normal","mobile":mobile,"password":password,"google_auth":payload['google_auth'],"email":payload['email']}
+      #query run
+      response=await database_execute(query,values)
+      #query fail
+      if response["status"]=="false":
+         raise HTTPException(status_code=400,detail=response)
+      #finally
+      response["next"]="login-non-admin-google-auth"
+      user = {"id":response['id']}
+
    #token create 
    token = token_create(user['id'])
    #finally
@@ -415,6 +433,12 @@ async def public_user_signup_normal(request:Request,payload:user_login):
 async def public_user_signup_google(request:Request,payload:user_login_google_auth):
    #prework
    payload=payload.dict()
+
+   # check google verification
+   google_auth_verify = await google_auth_verification(payload['google_auth_token'],payload['email'])
+   if google_auth_verify['status'] == 'false':
+      raise HTTPException(status_code=400,detail="Email Not Match!")
+
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
