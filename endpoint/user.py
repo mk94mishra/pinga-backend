@@ -39,7 +39,7 @@ class user_login(BaseModel):
 class user_login_google_auth(BaseModel):
    google_auth:str
    google_auth_token:str
-   email:Optional[str]=None
+   email:str
 
 class user_login_mobile_otp_auth(BaseModel):
    mobile:str
