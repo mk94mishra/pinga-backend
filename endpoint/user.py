@@ -179,7 +179,7 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
       #query run
       response=await database_execute(query,values)
       #finally
-      user = response["id"]
+      user = {"id":response["id"],"name":None}
       
    #token create 
    token = token_create(user['id'])
