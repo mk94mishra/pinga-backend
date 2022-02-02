@@ -180,6 +180,7 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
       response=await database_execute(query,values)
       #finally
       user = {"id":response["id"],"name":None}
+      print(user)
       
    #token create 
    token = token_create(user['id'])
@@ -199,12 +200,13 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    payload=payload.dict()   
    # check google 
    google_auth_verify = await google_auth_verification(payload['google_auth_token'],payload['email'])
+   print(google_auth_verify)
    if google_auth_verify['status'] == 'false':
       raise HTTPException(status_code=400,detail="Email Not Match!")
    try:
       #query set
       query="""select * from "user" where email=:email"""
-      values={"google_auth":payload['google_auth'],"email":payload['email']}
+      values={"email":payload['email']}
       #query run
       response=await database_fetch_all(query,values)
       if response["status"]=="false":
@@ -229,7 +231,7 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
       #finally
       response["next"]="login-non-admin-google-auth"
       user = {"id":response['id']}
-
+      
    #token create 
    token = token_create(user['id'])
    #finally
