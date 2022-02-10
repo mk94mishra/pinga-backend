@@ -320,7 +320,7 @@ is_active BOOLEAN NOT NULL DEFAULT true,
 
 created_by_id bigint REFERENCES "user" NOT NULL,
 option_id bigint REFERENCES option NOT NULL,
-flag_date DATE,
+flag_date TIMESTAMPTZ,
 flag BOOLEAN,
 data jsonb,
 ADD CONSTRAINT uq_answer UNIQUE(created_by_id, option_id, flag_date)
