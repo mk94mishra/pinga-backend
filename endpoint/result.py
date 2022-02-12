@@ -96,12 +96,15 @@ async def result_read(request:Request,user_id:int,form_id:int):
          q_final_score=q_score*x['weightage']
          if i == len(response['message']):
             user_sum_final_score=user_sum_final_score+q_final_score
+            print("usfc", user_sum_final_score)
       if x['score'] == 0:
          q_final_score = q_final_score * x['weightage']
+         print(x['weightage'])
          if i == len(response['message']):
             user_sum_final_score=user_sum_final_score+q_final_score
+            print("usfc", user_sum_final_score)
       i=i+1
-   print(user_sum_final_score)
+        
    # query set
    query="""
          with
@@ -125,12 +128,15 @@ async def result_read(request:Request,user_id:int,form_id:int):
    try:
       max_weightage = response['message'][0]['max_weightage']
       sum_score = response['message'][0]['sum_score']
+      print("mw",max_weightage)
+      print("usc",user_sum_final_score)
+      print("sc",sum_score)
       user_result = (user_sum_final_score*100)/(sum_score*max_weightage)
-      if user_result < 50:
+      if user_result < 10:
          risk = 'low'
-      if user_result > 66:
+      if user_result > 14:
          risk = 'high'
-      if user_result <= 66 and user_result >= 50:
+      if user_result <= 13 and user_result >= 11:
          risk = 'medium'
 
       response = {
