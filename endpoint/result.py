@@ -132,11 +132,11 @@ async def result_read(request:Request,user_id:int,form_id:int):
       print("usc",user_sum_final_score)
       print("sc",sum_score)
       user_result = (user_sum_final_score*100)/(sum_score*max_weightage)
-      if user_result < 10:
+      if user_result < 5:
          risk = 'low'
-      if user_result > 14:
+      if user_result > 9:
          risk = 'high'
-      if user_result <= 13 and user_result >= 11:
+      if user_result <= 9 and user_result >= 5:
          risk = 'medium'
 
       response = {
