@@ -89,20 +89,16 @@ async def result_read(request:Request,user_id:int,form_id:int):
    q_final_score = 0
    i=1
    for x in  response['message']:
-      
-      if x['score']:
+      if int(x['score']):
          user_sum_final_score=user_sum_final_score+q_final_score
-         q_score =x['score']
-         q_final_score=q_score*x['weightage']
+         q_score =int(x['score'])
+         q_final_score=q_score*int(x['weightage'])
          if i == len(response['message']):
             user_sum_final_score=user_sum_final_score+q_final_score
-            print("usfc", user_sum_final_score)
-      if x['score'] == 0:
-         q_final_score = q_final_score * x['weightage']
-         print(x['weightage'])
+      if int(x['score']) == 0:
+         q_final_score = q_final_score * int(x['weightage'])
          if i == len(response['message']):
             user_sum_final_score=user_sum_final_score+q_final_score
-            print("usfc", user_sum_final_score)
       i=i+1
         
    # query set
