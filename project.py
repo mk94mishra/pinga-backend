@@ -40,7 +40,7 @@ async def middleware_request_check(request:Request,endpoint_function):
       response=await endpoint_function(request)
       return response
 
-   return JSONResponse(status_code=400, content=jsonable_encoder(response))
+   return JSONResponse(status_code=401, content=jsonable_encoder(response))
 
 
 

@@ -86,13 +86,13 @@ async def user_login_admin(request:Request,payload:user_login):
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
-      raise HTTPException(status_code=400,detail=response)
+      raise HTTPException(status_code=401,detail=response)
    row=response["message"]
    #pick user
    user=row[0]
    #admin check
    if user['type']!="admin":
-      raise HTTPException(status_code=400,detail="you are not an admin")
+      raise HTTPException(status_code=401,detail="you are not an admin")
    #token create 
    token = token_create(user['id'])
    #finally
@@ -148,15 +148,15 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
    response=await database_fetch_all(query,values)
    if response["message"] == []:
       response = {"status":"false", "message":"otp not verified!"}
-      raise HTTPException(status_code=400,detail=response)
+      raise HTTPException(status_code=401,detail=response)
    
    diffrence = response["message"][0]['difference'].split(':')
    if int(diffrence[1])>=5:
       response = {"status":"false", "message":"otp expired!"}
-      raise HTTPException(status_code=400,detail=response)
+      raise HTTPException(status_code=401,detail=response)
 
    if response["status"]=="false":
-      raise HTTPException(status_code=400,detail=response)
+      raise HTTPException(status_code=401,detail=response)
 
    # check user for login
    try:
@@ -202,7 +202,7 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
    google_auth_verify = await google_auth_verification(payload['google_auth_token'],payload['email'])
    print(google_auth_verify)
    if google_auth_verify['status'] == 'false':
-      raise HTTPException(status_code=400,detail="Email Not Match!")
+      raise HTTPException(status_code=401,detail="Email Not Match!")
    try:
       #query set
       query="""select * from "user" where email=:email"""
@@ -210,12 +210,12 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
       #query run
       response=await database_fetch_all(query,values)
       if response["status"]=="false":
-         raise HTTPException(status_code=400,detail=response)
+         raise HTTPException(status_code=401,detail=response)
       row=response["message"]
       #pick first element
       if response["message"] == []:
          response = {'status':"false",'message': "wrong credentials!"}
-         raise HTTPException(status_code=400,detail=response)
+         raise HTTPException(status_code=401,detail=response)
       user=row[0]
    except:
       mobile = str(uuid.uuid1()) + "test"
@@ -227,7 +227,7 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
       response=await database_execute(query,values)
       #query fail
       if response["status"]=="false":
-         raise HTTPException(status_code=400,detail=response)
+         raise HTTPException(status_code=401,detail=response)
       #finally
       response["next"]="login-non-admin-google-auth"
       user = {"id":response['id']}
@@ -332,7 +332,7 @@ async def user_read_all_by_admin(request:Request,offset:int):
    # admin user check
    response = await is_admin(user_id)
    if response['status'] != "true":
-      raise HTTPException(status_code=400,detail=response)
+      raise HTTPException(status_code=401,detail=response)
    #query set
    query="""select * from "user" order by created_at desc limit 10 offset :offset"""
    values={"offset":offset}
@@ -355,7 +355,7 @@ async def user_create_by_admin(request:Request,payload:user_create):
    # admin user check
    response = await is_admin(user_id)
    if response['status'] != "true":
-      raise HTTPException(status_code=400,detail=response) 
+      raise HTTPException(status_code=401,detail=response) 
    #query set
    query="""insert into "user" (mobile,password,type,created_by) values (:mobile,:password,:type,:created_by)"""
    values={"mobile":payload['mobile'],"password":password_hash,"type":payload['type'],"created_by":user_id}
