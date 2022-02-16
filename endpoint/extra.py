@@ -28,6 +28,11 @@ class quick_guide(BaseModel):
    link_url:str
    media_url:str
 
+
+#1 extra:mood
+class mood(BaseModel):
+   moodtype:str
+ 
 #2 extra:scheme
 class scheme(BaseModel):
    title:str
@@ -87,6 +92,26 @@ async def extra_create_scheme(request:Request,payload:scheme):
    #query set
    query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
    values={"created_by_id":user_id,"type":"scheme","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+#2 extra create:mood
+@router.post("/extra/mood")
+async def extra_create_mood(request:Request,payload:mood):
+   #prework
+   user_id=request.state.user_id
+   payload=json.dumps(payload.dict())
+   # admin user check
+   response = await is_admin(user_id)
+   if response['status']!="true":
+      raise HTTPException(status_code=401,detail=response)
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data)"""
+   values={"created_by_id":user_id,"type":"mood","data":payload}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
