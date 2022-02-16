@@ -13,8 +13,6 @@ async def is_public_endpoint(request):
 
 #2 has valid token
 import time,jwt
-from fastapi import APIRouter, Request, HTTPException
-
 async def has_valid_token(request):
    #prework
    response={"status":"false"}
