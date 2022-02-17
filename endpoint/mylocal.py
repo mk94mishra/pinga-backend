@@ -20,39 +20,59 @@ class subscribe(BaseModel):
 #1 subscribe create
 
 
-sql_data = [
-   {'day':1,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(82).png'},
-{'day':2,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(83).png'},
-{'day':4,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(84).png'},
-{'day':5,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(85).png'},
-{'day':6,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(86).png'},
-{'day':7,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(87).png'},
-{'day':8,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(88).png'},
-{'day':9,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(89).png'},
-{'day':10,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(90).png'},
-{'day':11,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(91).png'},
-{'day':12,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(92).png'},
-{'day':13,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(93).png'},
-{'day':14,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(94).png'},
-{'day':15,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(95).png'},
-{'day':16,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(96).png'},
-{'day':17,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(97).png'},
-{'day':18,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(98).png'},
-{'day':19,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(99).png'},
-{'day':20,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(100).png'},
-{'day':21,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(101).png'},
-{'day':22,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(102).png'},
-{'day':23,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(103).png'},
-{'day':24,'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blog/Screenshot+(104).png'}
-]
+# for production ---
+
+# sql_data = [
+#    {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/lovely-couple-have-warm-cuddle.jpg','id':114},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/couple-talking-about-something-last-night-morning_1150-4965.jpg','id':115},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/he-loves-waking-up-his-love_329181-13854.jpg','id':116},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/portrait-expressive-young-woman.jpg','id':112},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/my-bed-is-my-best-friend.jpg','id':123},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/smiling-lovely-woman-holding-present-box-looking-away_171337-12660.jpg','id':124},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/overweight-squeeze-belly-fat-with-measure-tape-her-neck_1150-34777.jpg','id':125},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/beautiful-young-woman-eating-salad-black-background_1301-7563.jpg','id':126},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/weight-loss-scale-with-centimeter-top-view_1150-42311.jpg','id':128},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/shallow-focus-shot-sporty-female-doing-workout-park_181624-53286.jpg','id':129},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/sporty-woman-eats-red-apple-orange-wall_197531-13152.jpg','id':130},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/sick-woman-with-hands-stomach-suffering-from-intense-pain_1262-18659.jpg','id':131},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/pleased-satisfied-young-female-model-makes-zero-gesture-wears-transparent-glasses-has-long-dark-hair_273609-17999.jpg','id':132},	
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-asian-woman-practicing-yoga-living-room_7861-1619.jpg','id':136},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/medium-shot-woman-drinking-water_23-2149235399.jpg','id':137},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-doing-her-workout-home-fitness-mat_23-2148995636.jpg','id':139},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/i-always-have-bottle-water-after-workout_329181-3555.jpg','id':140},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/portrait-happy-healthy-fitness-woman-holding-green-apple_171337-10200.jpg','id':141},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/funny-curly-haired-european-woman-blows-cheeks-has-fun-never-looses-sense-humor-holds-breath-makes-grimace-dressed-basic-t-shirt-isolated-white-wall-people-emotions-concept_273609-49632+(1).jpg','id':142},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/hopeful-cheerful-woman-crosses-fingers-good-luck-keeps-eyes-closed-smiles-pleasantly-applies-green-spa-facial-mask-reducing-fine-lines-wears-headband-stands-bare-shoulders-isolated-beige_273609-56958.jpg','id':144},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/healthy-lifestyle-medicine-nutritional-supplements-people-concept-close-up-male-hands-holding-pills-with-cod-liver-oil-capsules-water-glass_1088-1053.jpg','id':145},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/smiling-green-eyed-girl-puts-cream-clean-face-brunette-white-top-posing-isolated-wall_197531-13902.jpg','id':146},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/make-up-spa-treatment-concept_23-2148645530.jpg','id':150},
+				
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-hand-holding-pregnancy-test_1150-5119.jpg','id':152},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/dissatisfied-girl-keeps-hands-crotch-presses-lower-abdomen-needs-toilet-badly-has-syndrome-cystitis_273609-25635.jpg','id':153},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-being-confident-with-her-acne_23-2148982594.jpg','id':154},
+				
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/romantic-happy-couple-bed-enjoying-sensual-foreplay_1150-4957.jpg','id':158},
+				
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/woman-having-stomach-ache-bending-with-hands-belly-discomfort-from-menstrual-cramps_1258-19063.jpg','id':160},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-haviing-abdominal-pain-because-menstruation-lying-couch-holding-her-stomach_231208-689.jpg','id':161},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/woman-standing-with-stomach-ache-presses-her-hand-her-stomach_1150-25976.jpg','id':162},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/marijuana-buds-with-marijuana-joints-cannabis-oil_1150-20687.jpg','id':127},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-african-american-woman-dressed-sport-bra-eating-chocolate-after-workout-isolated-yellow-background_574295-1972.jpg','id':147},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/doctor-with-measure-tape-measuring-size-patient-s-breast_1301-7531.jpg','id':148},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/hand-holding-blood-glucose-meter-measuring-blood-sugar-background-is-stethoscope-chart-file_1387-942.jpg','id':155},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/puzzled-guilty-woman-white-dress-clinging-head-looking-female-periods-calendar-checking-menstruation-days_365776-3419.jpg','id':163},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/girl-feeling-sick-touching-stomach-complaining-cramps-pain_176420-30929.jpg','id':164},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-holding-condom-contraceptive-pills-prevent-pregnancy_1150-14218.jpg','id':165},
+# {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/smiling-beautiful-woman-approves-using-menstrual-cup-makes-okay-gesture-holds-silicone-product-insert-into-vagina-hand-gives-recommendations-women-begginer-cup-users-isolated-yellow_273609-39665.jpg','id':171}
+# ]
 # @router.get("/mylocal")
 # async def mylocal_create(request:Request):
    
 #    for x in sql_data:
-#       print(x['day'],x['link'])
+#       print(x['id'],x['link'])
 #       #query set
-#       query="""update blog set media_type='image',media_url=:media_url where type='hormonometer' and day=:day"""
-#       values={"day":x['day'],"media_url":x['link']}
+#       query="""update blog set media_type='image',media_url=:media_url where type='collection' and id=:id"""
+#       values={"id":x['id'],"media_url":x['link']}
 #       #query run
 #       response=await database_execute(query,values)
 #       print(response)
@@ -64,48 +84,48 @@ sql_data = [
 
 
 
-@router.get("/mylocal")
-async def mylocal_create(request:Request):
-   # import necessary packages
+# @router.get("/mylocal")
+# async def mylocal_create(request:Request):
+#    # import necessary packages
 
-   from email.mime.multipart import MIMEMultipart
-   from email.mime.text import MIMEText
-   import smtplib
-   from smtplib import SMTPException
+#    from email.mime.multipart import MIMEMultipart
+#    from email.mime.text import MIMEText
+#    import smtplib
+#    from smtplib import SMTPException
 
-   # create message object instance
-   msg = MIMEMultipart()
-
-
-   message = "Thank you"
-
-   # setup the parameters of the message
-   password = "BLWYNd5wGkFn9db7B5BI4wkXZ64747MiVRzpxgP4FdN4"
-   msg['From'] = "notify@pingaweb.com"
-   msg['To'] = "manish@pingaweb.com"
-   msg['Subject'] = "My Account Setup PingaWeb"
-
-   # add in the message body
-   msg.attach(MIMEText(message, 'plain'))
-
-   #create server
-   server = smtplib.SMTP('email-smtp.ap-south-1.amazonaws.com: 587')
-
-   server.starttls()
-
-   # Login Credentials for sending the mail
-   server.login('AKIA22OPN45J7UZ6INNP', password)
+#    # create message object instance
+#    msg = MIMEMultipart()
 
 
-   # send the message via the server.
-   # print(server.sendmail(msg['From'], msg['To'], msg.as_string()))
-   try:
-      server.sendmail(msg['From'], msg['To'], msg.as_string())         
-      print("Successfully sent email")
-   except SMTPException:
-      print(SMTPException)
-   server.quit()
-   return "fdghjgfkjchgk"
+#    message = "Thank you"
+
+#    # setup the parameters of the message
+#    password = "BLWYNd5wGkFn9db7B5BI4wkXZ64747MiVRzpxgP4FdN4"
+#    msg['From'] = "notify@pingaweb.com"
+#    msg['To'] = "manish@pingaweb.com"
+#    msg['Subject'] = "My Account Setup PingaWeb"
+
+#    # add in the message body
+#    msg.attach(MIMEText(message, 'plain'))
+
+#    #create server
+#    server = smtplib.SMTP('email-smtp.ap-south-1.amazonaws.com: 587')
+
+#    server.starttls()
+
+#    # Login Credentials for sending the mail
+#    server.login('AKIA22OPN45J7UZ6INNP', password)
+
+
+#    # send the message via the server.
+#    # print(server.sendmail(msg['From'], msg['To'], msg.as_string()))
+#    try:
+#       server.sendmail(msg['From'], msg['To'], msg.as_string())         
+#       print("Successfully sent email")
+#    except SMTPException:
+#       print(SMTPException)
+#    server.quit()
+#    return "fdghjgfkjchgk"
 
 
 

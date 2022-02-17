@@ -31,7 +31,7 @@ class quick_guide(BaseModel):
 
 #1 extra:mood
 class mood(BaseModel):
-   moodtype:list[str]
+   moodtype:list
  
 #2 extra:scheme
 class scheme(BaseModel):
