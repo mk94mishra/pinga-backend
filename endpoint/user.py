@@ -148,15 +148,15 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
    response=await database_fetch_all(query,values)
    if response["message"] == []:
       response = {"status":"false", "message":"otp not verified!"}
-      raise HTTPException(status_code=401,detail=response)
+      raise HTTPException(status_code=400,detail=response)
    
    diffrence = response["message"][0]['difference'].split(':')
    if int(diffrence[1])>=5:
       response = {"status":"false", "message":"otp expired!"}
-      raise HTTPException(status_code=401,detail=response)
+      raise HTTPException(status_code=400,detail=response)
 
    if response["status"]=="false":
-      raise HTTPException(status_code=401,detail=response)
+      raise HTTPException(status_code=400,detail=response)
 
    # check user for login
    try:
