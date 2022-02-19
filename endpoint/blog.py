@@ -35,11 +35,11 @@ class collection(BaseModel):
    collection: str
    course_name:str
    description:str
-   link_url:str
-   media_type:media_type
-   media_thumbnail_url:str
-   media_url:str
-   day:int
+   link_url:Optional[str]=None
+   media_type:Optional[str]=None
+   media_thumbnail_url:Optional[str]=None
+   media_url:Optional[str]=None
+   day:Optional[int]=None
 
 
 #2 blog: collection_category
