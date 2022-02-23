@@ -34,7 +34,6 @@ async def middleware_request_check(request:Request,endpoint_function):
       return JSONResponse(status_code=400, content=jsonable_encoder(response))
 
    minimum_apk_version = '1.1.1'
-   print(minimum_apk_version)
    if request.headers.get("Apkversion") and request.headers.get("Apkversion") != minimum_apk_version:
       print("apkversion",request.headers.get("Apkversion"))
       response = {"status":"false", "message":"Please update app"} 
