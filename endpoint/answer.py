@@ -22,6 +22,12 @@ async def answer_create(request:Request,payload:answer):
    #prework
    user_id = request.state.user_id
    payload=payload.dict()
+   
+   # check answer length
+   if len(payload['option_id']) != len(list(dict.fromkeys(payload['option_id']))):
+      response = {"status":"false","message":"don't repeat option id"}
+      raise HTTPException(status_code=400,detail=response)
+
    #query set
    query="""insert into answer (created_by_id,option_id,data) values (:created_by_id,:option_id,:data) returning *"""
    # values={"created_by_id":user_id,"option_id":payload['option_id']}
@@ -93,10 +99,10 @@ async def answer_read(request:Request,answer_id:int,option_id:int):
 
 #3 answer delete
 @router.delete("/answer/user/{user_id}/form/{form_id}")
-async def answer_read(request:Request,user_id:int,form_id:int):
+async def answer_delete(request:Request,user_id:int,form_id:int):
    #prework
    user_id=request.state.user_id
-   #query set
+   # query set
    query="""with 
       q as (select * from question),
       o as (select * from "option")
@@ -106,6 +112,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
       left join q on q.id=o.question_id
       where a.created_by_id=:user_id and q.form_id=:form_id and a.flag is null"""
    values={"user_id":user_id,"form_id":form_id}
+   
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
@@ -117,6 +124,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
 
    array_list = response["message"][0]['id']
    #query set
+
    current_time = str(datetime.datetime.now())
    array_list = str(array_list).replace("[", "").replace("]", "")
    

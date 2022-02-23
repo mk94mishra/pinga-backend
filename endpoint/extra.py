@@ -19,6 +19,7 @@ class extra_type(str, Enum):
    mood='mood'
    admin='admin'
    pingasm_result='pingasm_result'
+   motivation='motivation'
 
 #scehema
 #1 extra:quick-guide
@@ -55,6 +56,10 @@ class interest(BaseModel):
 
 #5 extra:admin
 class admin(BaseModel):
+   data:dict
+
+#5 extra:motivation
+class motivation(BaseModel):
    data:dict
 
 #endpoint
@@ -178,6 +183,28 @@ async def extra_create_admin(request:Request,payload:admin):
    #query set
    query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
    values={"created_by_id":user_id,"type":"admin","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
+#4 extra create:motivation
+@router.post("/extra/motivation")
+async def extra_create_motivation(request:Request,payload:motivation):
+   #prework
+   user_id=request.state.user_id
+   payload=payload.dict()
+   payload=json.dumps(payload['data'])
+   # admin user check
+   response = await is_admin(user_id)
+   if response['status']!="true":
+      raise HTTPException(status_code=400,detail=response)
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
+   values={"created_by_id":user_id,"type":"motivation","data":payload}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
