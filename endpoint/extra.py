@@ -51,7 +51,7 @@ class helpdesk(BaseModel):
 #4 extra:interest
 class interest(BaseModel):
    title:str
-   image:Optional[str]=None
+   media_url:Optional[str]=None
 
 
 #5 extra:admin
