@@ -58,6 +58,13 @@ class interest(BaseModel):
 class admin(BaseModel):
    data:dict
 
+#5 extra:typeform
+class typeform(BaseModel):
+   event_id:Optional[str]=None
+   event_type:Optional[str]=None
+   form_response:dict
+
+
 #5 extra:motivation
 class motivation(BaseModel):
    data:dict
@@ -183,6 +190,27 @@ async def extra_create_admin(request:Request,payload:admin):
    #query set
    query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
    values={"created_by_id":user_id,"type":"admin","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
+
+#3 extra create:admin
+@router.post("/extra/typeform")
+async def extra_create_typeform(request:Request,payload:typeform):
+   #prework
+   # user_id=request.state.user_id
+   payload=payload.dict()
+   payload['data']  = {'event_id':payload['event_id'], 'event_type':payload['event_type'],'form_response':payload['form_response']}
+   payload=json.dumps(payload['data'])
+   
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
+   values={"created_by_id":1,"type":"typeform","data":payload}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":

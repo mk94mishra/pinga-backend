@@ -14,7 +14,7 @@ message = "Thank you"
 # setup the parameters of the message
 password = "BLWYNd5wGkFn9db7B5BI4wkXZ64747MiVRzpxgP4FdN4"
 msg['From'] = "notify@pingaweb.com"
-msg['To'] = "support@pingaweb.com"
+msg['To'] = "mk94mishra@gmail.com"
 msg['Subject'] = "My Account Setup PingaWeb"
 
 # add in the message body
