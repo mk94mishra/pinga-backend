@@ -20,6 +20,7 @@ class extra_type(str, Enum):
    admin='admin'
    pingasm_result='pingasm_result'
    motivation='motivation'
+   typeform='typeform'
 
 #scehema
 #1 extra:quick-guide
@@ -64,6 +65,9 @@ class typeform(BaseModel):
    event_type:Optional[str]=None
    form_response:dict
 
+#5 extra:readtypeform
+class readtypeform(BaseModel):
+   typeform_id:int
 
 #5 extra:motivation
 class motivation(BaseModel):
@@ -250,6 +254,24 @@ async def extra_read_single(request:Request,id:int):
    #query set
    query="""select * from extra_master where id=:id ;"""
    values={"id":id}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #finally
+   response=row
+   return response
+
+
+
+#4 extra read typeform
+@router.post("/extra/read-typeform")
+async def extra_read_single_typeform(request:Request,payload:readtypeform):
+   payload=payload.dict()
+   #query set
+   query="""select * from extra where id=:id and type='typeform';"""
+   values={"id":payload['typeform_id']}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
