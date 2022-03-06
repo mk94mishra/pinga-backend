@@ -65,8 +65,23 @@ class subscribe(BaseModel):
 # {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/young-woman-holding-condom-contraceptive-pills-prevent-pregnancy_1150-14218.jpg','id':165},
 # {'link':'https://pinga-storage.s3.ap-south-1.amazonaws.com/blogs/smiling-beautiful-woman-approves-using-menstrual-cup-makes-okay-gesture-holds-silicone-product-insert-into-vagina-hand-gives-recommendations-women-begginer-cup-users-isolated-yellow_273609-39665.jpg','id':171}
 # ]
-# @router.get("/mylocal")
-# async def mylocal_create(request:Request):
+
+
+
+import mailchimp_transactional as MailchimpTransactional
+from mailchimp_transactional.api_client import ApiClientError
+
+@router.get("/mylocal")
+async def mylocal_create(request:Request):
+   try:
+      mailchimp = MailchimpTransactional.Client('877cb4df376f85992cb453bfe707bcb1-us20')
+      response = mailchimp.users.ping()
+      print('API called successfully: {}'.format(response))
+      return 'API called successfully'
+   except ApiClientError as error:
+      print('An exception occurred: {}'.format(error.text))
+      return 'An exception occurred:'
+
    
 #    for x in sql_data:
 #       print(x['id'],x['link'])
