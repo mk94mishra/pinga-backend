@@ -121,7 +121,6 @@ httptools==0.2.0
 idna==3.3
 jmespath==0.10.0
 lxml==4.7.1
-mailchimp-transactional==1.0.47
 passlib==1.7.4
 postmarker==0.18.2
 premailer==3.10.0
