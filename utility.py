@@ -1,4 +1,7 @@
 
+from wsgiref.util import request_uri
+from requests import request
+from sqlalchemy import null, true
 from setting import *
 import json
 import uuid
@@ -156,6 +159,31 @@ async def google_auth_verification(google_auth_token,email):
    except:
       return {"status":"false","message":"google token not-verified"}
 
+
+
+# logging create
+async def logging_create(request, response):
+   try:
+      user_id = request.state.user_id
+   except:
+      user_id = null
+
+   #query set
+   query="""insert into logging (created_by_id,request_uri) values (:created_by_id,:request_uri) returning *;"""
+   values={"created_by_id":user_id, "request_uri":str(request.url)}
+
+   #query run
+   print(query, values)
+   # data = await database.execute(query=query,values=values)
+   try:
+      print("kgfkgkj")
+      data = await database.execute(query=query,values=values)
+      print("kgfkgkj")
+      #await database.disconnect()
+   except Exception as e:
+      response={"status":"false","message":e.args}
+      return response
+   
 
 
     

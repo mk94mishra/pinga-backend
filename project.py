@@ -55,7 +55,6 @@ async def middleware_request_check(request:Request,endpoint_function):
    return JSONResponse(status_code=401, content=jsonable_encoder(response))
 
 
-
 #6  database connect startup event
 from setting import database
 #3 startup event

@@ -11,6 +11,7 @@ is_active BOOLEAN NOT NULL DEFAULT true,
 created_by bigint NOT NULL,
 
 type VARCHAR (100) NOT NULL,
+role VARCHAR (100),
 mobile VARCHAR (10) UNIQUE NOT NULL,
 password VARCHAR (50) NOT NULL,
 google_auth VARCHAR (100) UNIQUE,
@@ -186,6 +187,15 @@ type VARCHAR (20),
 data jsonb
 );
 
+CREATE TABLE logging (
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+created_by_id bigint REFERENCES "user" ,
+request_uri VARCHAR (300),
+response_status VARCHAR (50),
+response_detail jsonb,
+data jsonb
+)
 
 #6 address
 CREATE TABLE address (
@@ -502,3 +512,47 @@ select
          left join question as q on q.id=o.question_id
          where a.created_by_id=:user_id and flag is null and q.form_id=:form_id
          order by q.id asc
+
+
+
+
+# dctore consult
+
+CREATE TABLE meeting(
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+is_active BOOLEAN NOT NULL DEFAULT true,
+created_by_id bigint NOT NULL,
+patient_id bigint NOT NULL,
+doctor_id bigint,
+type VARCHAR (100) NOT NULL,
+meeting_link VARCHAR (500),
+payment_link VARCHAR (500),
+date_time TIMESTAMPTZ,
+data jsonb	
+);
+
+
+CREATE TABLE consult(
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+is_active BOOLEAN NOT NULL DEFAULT true,
+created_by bigint NOT NULL,
+patient_id bigint NOT NULL,
+type VARCHAR (100) NOT NULL,
+data jsonb
+);
+
+
+CREATE TABLE followup(
+id BIGSERIAL PRIMARY KEY NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
+closed_at TIMESTAMPTZ,
+next_followup_at TIMESTAMPTZ,
+is_active BOOLEAN NOT NULL DEFAULT true,
+created_by bigint NOT NULL,
+patient_id bigint NOT NULL,
+type VARCHAR (100) NOT NULL,
+status VARCHAR (100) NOT NULL DEFAULT 'open',	
+data jsonb
+);

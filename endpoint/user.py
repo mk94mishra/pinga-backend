@@ -90,6 +90,7 @@ async def user_login_admin(request:Request,payload:user_login):
    row=response["message"]
    #pick user
    user=row[0]
+   print(user)
    #admin check
    if user['type']!="admin":
       raise HTTPException(status_code=401,detail="you are not an admin")
@@ -97,9 +98,9 @@ async def user_login_admin(request:Request,payload:user_login):
    token = token_create(user['id'])
    #finally
    if user['name']==None:
-      response = {'id':user['id'],'token': token,'next endpoint':"profile update"}
+      response = {'id':user['id'],'role':user['role'],'token': token,'next endpoint':"profile update"}
       return response
-   response = {'id':user['id'],'token': token,'next':"admin app homepage"}
+   response = {'id':user['id'],'role':user['role'],'token': token,'next':"admin app homepage"}
    return response
 
 
@@ -148,14 +149,17 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
    response=await database_fetch_all(query,values)
    if response["message"] == []:
       response = {"status":"false", "message":"otp not verified!"}
+      await logging_create(request, response)
       raise HTTPException(status_code=400,detail=response)
    
    diffrence = response["message"][0]['difference'].split(':')
    if int(diffrence[1])>=5:
       response = {"status":"false", "message":"otp expired!"}
+      await logging_create(request, response)
       raise HTTPException(status_code=400,detail=response)
 
    if response["status"]=="false":
+      await logging_create(request, response)
       raise HTTPException(status_code=400,detail=response)
 
    # check user for login
@@ -187,8 +191,10 @@ async def user_login_signup_mobile_otp_auth_non_admin(request:Request,payload:us
    #finally
    if user['name']==None:
       response = {'id':user['id'],'token': token,'next endpoint':"profile update"}
+      await logging_create(request, response)
       return response
    response = {'id':user['id'],'token': token,'next':"app homepage"}
+   await logging_create(request, response)
    return response
 
 
