@@ -522,7 +522,7 @@ CREATE TABLE meeting(
 id BIGSERIAL PRIMARY KEY NOT NULL,
 created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
 is_active BOOLEAN NOT NULL DEFAULT true,
-created_by_id bigint NOT NULL,
+created_by bigint NOT NULL,
 patient_id bigint NOT NULL,
 doctor_id bigint,
 type VARCHAR (100) NOT NULL,
@@ -539,7 +539,7 @@ created_at TIMESTAMPTZ NOT NULL DEFAULT Now(),
 is_active BOOLEAN NOT NULL DEFAULT true,
 created_by bigint NOT NULL,
 patient_id bigint NOT NULL,
-type VARCHAR (100) NOT NULL,
+type VARCHAR (100),
 data jsonb
 );
 
@@ -552,7 +552,7 @@ next_followup_at TIMESTAMPTZ,
 is_active BOOLEAN NOT NULL DEFAULT true,
 created_by bigint NOT NULL,
 patient_id bigint NOT NULL,
-type VARCHAR (100) NOT NULL,
+type VARCHAR (100),
 status VARCHAR (100) NOT NULL DEFAULT 'open',	
 data jsonb
 );

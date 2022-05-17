@@ -5,6 +5,10 @@ from project import project
 from endpoint.user import router as user_router
 project.include_router(user_router)
 
+#user router
+from endpoint.consult import router as consult_router
+project.include_router(consult_router)
+
 #mood router
 from endpoint.mood import router as mood_router
 project.include_router(mood_router)
