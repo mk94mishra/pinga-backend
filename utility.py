@@ -35,6 +35,7 @@ async def has_valid_token(request):
       return response
    #token decode
    token=authorization_split[1]
+   print(token)
    try:
       claims=jwt.decode(token,config['token_secret_key'], algorithms=["HS256"])
    except Exception as e:

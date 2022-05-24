@@ -17,6 +17,7 @@ class status_type(str, Enum):
     succesfully_closed='succesfully_closed'
     unsuccesfully_closed ='unsuccesfully_closed'
 
+
 #scehema
 #1 followup
 class followup(BaseModel):
@@ -60,9 +61,9 @@ class meeting_filter(BaseModel):
     type:Optional[str]=None
 
 
+
+
    
-
-
 #1 followup create
 @router.post("/followup")
 async def followup_create(request:Request,payload:followup):
@@ -103,6 +104,36 @@ async def followup_filter(request:Request,payload:followup):
         query = query + " and status=:status"
     if payload['created_by']:
         query = query + " and created_by=:created_by"
+        
+    values={"created_by":payload['created_by'],"patient_id":payload['patient_id'],"status":payload['status'],"next_followup_at":payload['next_followup_at'],"closed_at":payload['closed_at']}
+    #query run
+    response=await database_fetch_all(query,values)
+    if response["status"]=="false":
+        raise HTTPException(status_code=400,detail=response)
+    row=response["message"]
+    #finally
+    response=row
+    return response
+
+
+
+#2 followup filter
+@router.post("/followup/notification")
+async def followup_notification(request:Request,payload:followup):
+    #query set
+    query="""select u.name, u.email, u.mobile, fp.* from "user" as u 
+        left join followup as fp on fp.patient_id=u.id
+        where fp.is_active='true' and fp.status='open'"""
+    if payload['patient_id']:
+        query = query + " and fp.patient_id=:patient_id"
+    if payload['closed_at']:
+        query = query + " and fp.closed_at=:closed_at"
+    if payload['next_followup_at']:
+        query = query + " and fp.next_followup_at=:next_followup_at"
+    if payload['status']:
+        query = query + " and fp.status=:status"
+    if payload['created_by']:
+        query = query + " and fp.created_by=:created_by"
         
     values={"created_by":payload['created_by'],"patient_id":payload['patient_id'],"status":payload['status'],"next_followup_at":payload['next_followup_at'],"closed_at":payload['closed_at']}
     #query run

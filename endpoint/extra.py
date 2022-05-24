@@ -21,6 +21,7 @@ class extra_type(str, Enum):
    pingasm_result='pingasm_result'
    motivation='motivation'
    typeform='typeform'
+   web='web'
 
 #scehema
 #1 extra:quick-guide
@@ -71,6 +72,10 @@ class readtypeform(BaseModel):
 
 #5 extra:motivation
 class motivation(BaseModel):
+   data:dict
+
+#5 extra:web
+class web(BaseModel):
    data:dict
 
 #endpoint
@@ -245,6 +250,27 @@ async def extra_create_motivation(request:Request,payload:motivation):
    return response
 
 
+#2 extra create:web
+@router.post("/extra/web")
+async def extra_create_web(request:Request,payload:web):
+   #prework
+   user_id=request.state.user_id
+   payload=json.dumps(payload.dict())
+   # admin user check
+   response = await is_admin(user_id)
+   if response['status']!="true":
+      raise HTTPException(status_code=400,detail=response)
+   #query set
+   query="""insert into extra (created_by_id,type,data) values (:created_by_id,:type,:data) returning *"""
+   values={"created_by_id":user_id,"type":"web","data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
+
 
 #4 extra read single
 @router.get("/extra/{id}/read-single")
@@ -290,6 +316,23 @@ async def extra_read_all(request:Request,type:extra_type,offset:int):
    #query set
    query="""select * from extra where type=:type limit 10 offset :offset;"""
    values={"type":type,"offset":offset}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"]
+   #finally
+   response=row
+   return response
+
+
+#5 extra read all
+@router.get("/extra/web/read-all")
+async def extra_web_read_all(request:Request):
+   
+   #query set
+   query="""select * from extra where type='web'"""
+   values={}
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
@@ -387,6 +430,24 @@ async def extra_update_admin(request:Request,id:int,payload:admin):
       raise HTTPException(status_code=400,detail=response)
    #finally
    return response
+
+#6 extra update
+@router.put("/extra/{id}/web")
+async def extra_update_web(request:Request,id:int,payload:web):
+   #prework
+   user_id=request.state.user_id
+   payload=payload.dict()
+   payload = json.dumps(payload)
+   #query set
+   query="""update extra set data=:data where id=:id returning *"""
+   values={"id":id,"data":payload}
+   #query run
+   response=await database_execute(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   #finally
+   return response
+
 
 
 #9 extra:delete
