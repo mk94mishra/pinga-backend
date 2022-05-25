@@ -330,6 +330,33 @@ async def user_read_self(request:Request):
    return response
 
 
+#4 user read:admin
+@router.get("/user/:user_id/read-single-admin/")
+async def user_read_single(request:Request, user_id:int):
+   #prework
+   admin_user_id = request.state.user_id
+   # admin user check
+   response = await is_admin(admin_user_id)
+   if response['status'] != "true":
+      raise HTTPException(status_code=401,detail=response)
+   #query set
+   query="""select * from "user" where id=:id"""
+   values={"id":user_id}
+   #query run
+   response=await database_fetch_all(query,values)
+   if response["status"]=="false":
+      raise HTTPException(status_code=400,detail=response)
+   row=response["message"][0]
+   if row['password']:
+      row['password'] = "already set"
+   else:
+      row['password'] = "not set"
+   #finally
+   response=row
+   return response
+
+
+
 #6 user read all: by admin
 @router.get("/user/read-all-by-admin/")
 async def user_read_all_by_admin(request:Request,offset:int):
@@ -350,6 +377,7 @@ async def user_read_all_by_admin(request:Request,offset:int):
    #finally
    response=row
    return response
+
 
 #7 user create: by admin
 @router.post("/user/create-by-admin")

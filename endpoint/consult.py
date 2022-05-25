@@ -104,17 +104,20 @@ async def followup_create(request:Request,payload:followup):
 @router.post("/followup/filter")
 async def followup_filter(request:Request,payload:followup):
     #query set
-    query="select * from followup where is_active='true'"
-    if payload['patient_id']:
-        query = query + " and patient_id=:patient_id"
-    if payload['closed_at']:
-        query = query + " and closed_at=:closed_at"
-    if payload['next_followup_at']:
-        query = query + " and next_followup_at=:next_followup_at"
-    if payload['status']:
-        query = query + " and status=:status"
-    if payload['created_by']:
-        query = query + " and created_by=:created_by"
+    query="""select u.name, u.email, u.mobile, fp.* from "user" as u 
+        left join followup as fp on fp.patient_id=u.id where fp.is_active='true' and fp.status='open'"""
+    
+        
+    if payload['patient_id'] and payload['notification_type'] == 'old':
+        query = query + " and fp.patient_id=:patient_id"
+    if payload['closed_at'] and payload['notification_type'] == 'old':
+        query = query + " and fp.closed_at=:closed_at"
+    if payload['next_followup_at'] and payload['notification_type'] == 'old':
+        query = query + " and fp.next_followup_at=:next_followup_at"
+    if payload['status'] and payload['notification_type'] == 'old':
+        query = query + " and fp.status=:status"
+    if payload['created_by'] and payload['notification_type'] == 'old':
+        query = query + " and fp.created_by=:created_by"
         
     values={"created_by":payload['created_by'],"patient_id":payload['patient_id'],"status":payload['status'],"next_followup_at":payload['next_followup_at'],"closed_at":payload['closed_at']}
     #query run
@@ -125,7 +128,6 @@ async def followup_filter(request:Request,payload:followup):
     #finally
     response=row
     return response
-
 
 
 #2 followup filter
