@@ -331,7 +331,7 @@ async def user_read_self(request:Request):
 
 
 #4 user read:admin
-@router.get("/user/:user_id/read-single-by-admin/")
+@router.get("/user/{user_id}/read-single-by-admin/")
 async def user_read_single_by_admin(request:Request, user_id:int):
    #prework
    admin_user_id = request.state.user_id
