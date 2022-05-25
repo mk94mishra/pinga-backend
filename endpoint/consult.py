@@ -29,6 +29,17 @@ class followup(BaseModel):
     data:dict
 
 
+
+#1 followup_notification
+class followup_notification(BaseModel):
+    notification_type:str
+    patient_id:int
+    created_by:Optional[int]=0
+    status:status_type
+    next_followup_at:Optional[datetime] = None
+    closed_at:Optional[date] = None
+    data:dict
+
 #scehema
 #1 consult
 class consult(BaseModel):
@@ -119,20 +130,25 @@ async def followup_filter(request:Request,payload:followup):
 
 #2 followup filter
 @router.post("/followup/notification")
-async def followup_notification(request:Request,payload:followup):
+async def followup_notification(request:Request,payload:followup_notification):
     #query set
     query="""select u.name, u.email, u.mobile, fp.* from "user" as u 
-        left join followup as fp on fp.patient_id=u.id
-        where fp.is_active='true' and fp.status='open'"""
-    if payload['patient_id']:
+        left join followup as fp on fp.patient_id=u.id"""
+    
+    if payload['notification_type'] == 'old':
+        query = query + " where fp.is_active='true' and fp.status='open'"
+    if payload['notification_type'] == 'new':
+        query = query + " where fp.patient_id is null order by u.id desc"
+        
+    if payload['patient_id'] and payload['notification_type'] == 'old':
         query = query + " and fp.patient_id=:patient_id"
-    if payload['closed_at']:
+    if payload['closed_at'] and payload['notification_type'] == 'old':
         query = query + " and fp.closed_at=:closed_at"
-    if payload['next_followup_at']:
+    if payload['next_followup_at'] and payload['notification_type'] == 'old':
         query = query + " and fp.next_followup_at=:next_followup_at"
-    if payload['status']:
+    if payload['status'] and payload['notification_type'] == 'old':
         query = query + " and fp.status=:status"
-    if payload['created_by']:
+    if payload['created_by'] and payload['notification_type'] == 'old':
         query = query + " and fp.created_by=:created_by"
         
     values={"created_by":payload['created_by'],"patient_id":payload['patient_id'],"status":payload['status'],"next_followup_at":payload['next_followup_at'],"closed_at":payload['closed_at']}
