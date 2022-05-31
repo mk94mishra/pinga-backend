@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 from fastapi import APIRouter, Request, HTTPException
 from sqlalchemy.sql.elements import Null
 from setting import *
@@ -72,6 +73,10 @@ class user_create(BaseModel):
 #4 extra:interest
 class interest(BaseModel):
    interest:list
+
+class user_filter(BaseModel):
+   mobile:Optional[str]=None
+   name:Optional[str]=None
 
 #endpoint
 #1 user login:admin
@@ -421,18 +426,28 @@ async def user_get_single(request:Request,id:int):
 
   
 #9 user search by mobile: by admin
-@router.get("/user/search-by-mobile/")
-async def user_search_by_mobile(request:Request,mobile:str):
+@router.post("/user/filter")
+async def user_filter(request:Request,payload:user_filter):
    #prework
    user_id=request.state.user_id
+   payload=payload.dict()
    #query set
-   query="""select * from "user" where mobile=:mobile"""
-   values={"mobile":mobile}
+   query="""select * from "user" where is_active='true'"""
+   if payload['mobile']:
+      query = query+" and mobile like '%"+payload['mobile']+"%'"
+   if payload['name']:
+      query = query+" and name like '%"+payload['name']+"%'"
+   values={}
+   print(query)
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
-   row=response["message"]
+   row=response["message"][0]
+   if row['password']:
+      row['password'] = "already set"
+   else:
+      row['password'] = "not set"
    #finally
    response=row
    return response

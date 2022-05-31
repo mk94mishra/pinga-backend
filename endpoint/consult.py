@@ -54,7 +54,8 @@ class consult(BaseModel):
 #scehema
 #1 consult
 class consult_filter(BaseModel):
-    patient_id:int
+    patient_mobile:Optional[str]=None
+    patient_name:Optional[str]=None
     created_by:Optional[int]=0
     
 #scehema
@@ -111,6 +112,7 @@ async def followup_create(request:Request,payload:followup):
 @router.post("/followup/filter")
 async def followup_filter(request:Request,payload:followup):
     user_id = request.state.user_id
+    payload=payload.dict()
     #admin user check
     response = await is_admin(user_id)
     if response['status'] != "true":
@@ -146,6 +148,7 @@ async def followup_filter(request:Request,payload:followup):
 @router.post("/followup/notification")
 async def followup_notification(request:Request,payload:followup_notification):
     user_id = request.state.user_id
+    payload=payload.dict()
     #admin user check
     response = await is_admin(user_id)
     if response['status'] != "true":
@@ -216,19 +219,25 @@ async def consult_create(request:Request,payload:consult):
 @router.post("/consult/filter")
 async def consult_filter(request:Request,payload:consult_filter):
     user_id = request.state.user_id
+    payload=payload.dict()
     #admin user check
     response = await is_admin(user_id)
     if response['status'] != "true":
         raise HTTPException(status_code=400,detail=response)
 
     #query set
-    query="select * from consult where is_active='true'"
-    if payload['patient_id']:
-        query = query + " and patient_id=:patient_id"
+    query="""select u.mobile, u.name,c.* from consult as c 
+    left join "user" as u on u.id=c.patient_id where u.is_active='true'"""
+
+    
+    if payload['patient_mobile']:
+        query = query+" and u.mobile like '%"+payload['patient_mobile']+"%'"
+    if payload['patient_name']:
+        query = query+" and u.name like '%"+payload['patient_name']+"%'"
     if payload['created_by']:
-        query = query + " and created_by=:created_by"
+        query = query + " and c.created_by='"+payload['created_by']+"'"
         
-    values={"created_by":payload['created_by'],"patient_id":payload['patient_id']}
+    values={}
     #query run
     response=await database_fetch_all(query,values)
     if response["status"]=="false":
