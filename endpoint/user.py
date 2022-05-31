@@ -1,4 +1,3 @@
-from tkinter.messagebox import NO
 from fastapi import APIRouter, Request, HTTPException
 from sqlalchemy.sql.elements import Null
 from setting import *
