@@ -45,11 +45,18 @@ class followup_notification(BaseModel):
 class consult(BaseModel):
     patient_id:int
     created_by:Optional[int]=0
-    why_reason:Optional[str]=None
-    symtoms:Optional[str]=None
+    private_observation:Optional[str]=None
+    prescription_lifestyle:Optional[str]=None
+    prescription_medical:Optional[str]=None
     general:Optional[str]=None
 
 
+#scehema
+#1 consult
+class consult_filter(BaseModel):
+    patient_id:int
+    created_by:Optional[int]=0
+    
 #scehema
 # meeting
 class meeting(BaseModel):
@@ -103,6 +110,11 @@ async def followup_create(request:Request,payload:followup):
 #2 followup filter
 @router.post("/followup/filter")
 async def followup_filter(request:Request,payload:followup):
+    user_id = request.state.user_id
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
     #query set
     query="""select u.name, u.email, u.mobile, fp.* from "user" as u 
         left join followup as fp on fp.patient_id=u.id where fp.is_active='true' and fp.status='open'"""
@@ -133,6 +145,11 @@ async def followup_filter(request:Request,payload:followup):
 #2 followup filter
 @router.post("/followup/notification")
 async def followup_notification(request:Request,payload:followup_notification):
+    user_id = request.state.user_id
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
     #query set
     query="""select u.name, u.email, u.mobile, fp.* from "user" as u 
         left join followup as fp on fp.patient_id=u.id"""
@@ -179,7 +196,8 @@ async def consult_create(request:Request,payload:consult):
     response = await is_admin(user_id)
     if response['status'] != "true":
         raise HTTPException(status_code=400,detail=response)
-    payload['data'] = json.dumps({"symtoms":payload['symtoms'],"why_reason":payload['why_reason'],"general":payload['general']})
+
+    payload['data'] = json.dumps({"private_observation":payload['private_observation'],"prescription_lifestyle":payload['prescription_lifestyle'],"prescription_medical":payload['prescription_medical']})
     #query set
     query="""insert into consult (created_by,patient_id,data)
         values (:created_by,:patient_id,:data)
@@ -196,7 +214,13 @@ async def consult_create(request:Request,payload:consult):
 
 #2 consult filter
 @router.post("/consult/filter")
-async def followup_filter(request:Request,payload:consult):
+async def consult_filter(request:Request,payload:consult_filter):
+    user_id = request.state.user_id
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
+
     #query set
     query="select * from consult where is_active='true'"
     if payload['patient_id']:

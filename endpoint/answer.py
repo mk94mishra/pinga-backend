@@ -53,8 +53,12 @@ async def answer_create(request:Request,payload:answer):
 #2 answer read
 @router.get("/answer/user/{user_id}/form/{form_id}")
 async def answer_read(request:Request,user_id:int,form_id:int):
-   #prework
-   user_id=request.state.user_id
+   if request.state.user_id != user_id:
+      #admin user check
+      response = await is_admin(request.state.user_id)
+      if response['status'] != "true":
+         raise HTTPException(status_code=400,detail=response)
+
    #query set
    query="""
    with
