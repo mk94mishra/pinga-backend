@@ -235,7 +235,7 @@ async def consult_filter(request:Request,payload:consult_filter):
     if payload['patient_name']:
         query = query+" and u.name like '%"+payload['patient_name']+"%'"
     if payload['created_by']:
-        query = query + " and c.created_by='"+payload['created_by']+"'"
+        query = query + " and c.created_by='"+str(payload['created_by'])+"'"
         
     values={}
     #query run
