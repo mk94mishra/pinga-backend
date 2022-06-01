@@ -226,8 +226,10 @@ async def consult_filter(request:Request,payload:consult_filter):
         raise HTTPException(status_code=400,detail=response)
 
     #query set
-    query="""select u.mobile, u.name,c.* from consult as c 
-    left join "user" as u on u.id=c.patient_id where u.is_active='true'"""
+    query="""select u.mobile, u.name, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
+    left join "user" as u on u.id=c.patient_id 
+    left join "user" as d on d.id=c.created_by
+    where u.is_active='true'"""
 
     
     if payload['patient_mobile']:
