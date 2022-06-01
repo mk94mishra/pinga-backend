@@ -12,7 +12,7 @@ created_by bigint NOT NULL,
 
 type VARCHAR (100) NOT NULL,
 role VARCHAR (100),
-mobile VARCHAR (10) UNIQUE NOT NULL,
+mobile VARCHAR (50) UNIQUE,
 password VARCHAR (50) NOT NULL,
 google_auth VARCHAR (100) UNIQUE,
 name VARCHAR(50),

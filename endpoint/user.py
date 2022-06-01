@@ -228,7 +228,7 @@ async def user_login_non_admin(request:Request,payload:user_login_google_auth):
          raise HTTPException(status_code=401,detail=response)
       user=row[0]
    except:
-      mobile = str(uuid.uuid1()) + "test"
+      mobile = null
       password = str(random.randrange(20, 50, 3)) + "test"
       #query set
       query="""insert into "user" (created_by,type,mobile,password,google_auth,email) values (:created_by,:type,:mobile,:password,:google_auth,:email) returning *;"""
@@ -425,28 +425,26 @@ async def user_get_single(request:Request,id:int):
 
   
 #9 user search by mobile: by admin
-@router.post("/user/filter")
-async def user_filter(request:Request,payload:user_filter):
+@router.get("/user/filter/{search}")
+async def user_filter(request:Request,search:str):
    #prework
    user_id=request.state.user_id
-   payload=payload.dict()
    #query set
-   query="""select * from "user" where is_active='true'"""
-   if payload['mobile']:
-      query = query+" and mobile like '%"+payload['mobile']+"%'"
-   if payload['name']:
-      query = query+" and name like '%"+payload['name']+"%'"
+   query="""select id,mobile,name,email,gender,dob ,profile_pic_url,weight,height,created_at ,is_active ,created_by , type,role from "user" where is_active='true' """
+   
+   query = query+" and mobile like '%"+search+"%' or name like '%"+search+"%'"
+
    values={}
    print(query)
    #query run
    response=await database_fetch_all(query,values)
    if response["status"]=="false":
       raise HTTPException(status_code=400,detail=response)
-   row=response["message"][0]
-   if row['password']:
-      row['password'] = "already set"
-   else:
-      row['password'] = "not set"
+   row=response["message"]
+   # if row['password']:
+   #    row['password'] = "already set"
+   # else:
+   #    row['password'] = "not set"
    #finally
    response=row
    return response
@@ -492,7 +490,7 @@ async def public_user_signup_google(request:Request,payload:user_login_google_au
    #check null value
    if '' in list(payload.values()) or any(' ' in ele for ele in list(payload.values())):
       raise HTTPException(status_code=400,detail="null or white space not allowed")
-   mobile = str(uuid.uuid1()) + "test"
+   mobile = null
    password = str(random.randrange(20, 50, 3)) + "test"
    print(mobile)
    #query set
