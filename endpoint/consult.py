@@ -200,7 +200,7 @@ async def consult_create(request:Request,payload:consult):
     if response['status'] != "true":
         raise HTTPException(status_code=400,detail=response)
 
-    payload['data'] = json.dumps({"private_observation":payload['private_observation'],"prescription_lifestyle":payload['prescription_lifestyle'],"prescription_medical":payload['prescription_medical']})
+    payload['data'] = json.dumps({"private_observation":payload['private_observation'],"prescription_lifestyle":payload['prescription_lifestyle'],"prescription_medical":payload['prescription_medical'],"general":payload['general']})
     #query set
     query="""insert into consult (created_by,patient_id,data)
         values (:created_by,:patient_id,:data)
