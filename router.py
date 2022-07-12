@@ -9,6 +9,10 @@ project.include_router(user_router)
 from endpoint.consult import router as consult_router
 project.include_router(consult_router)
 
+#user router
+from endpoint.patient import router as patient_router
+project.include_router(patient_router)
+
 #mood router
 from endpoint.mood import router as mood_router
 project.include_router(mood_router)

@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import OP
 from fastapi import APIRouter, Request, HTTPException
 from setting import *
 from utility import *
@@ -44,18 +45,39 @@ class followup_notification(BaseModel):
 #1 consult
 class consult(BaseModel):
     patient_id:int
-    created_by:Optional[int]=0
+    created_by:Optional[int]
     private_observation:Optional[str]=None
     prescription_lifestyle:Optional[str]=None
     prescription_medical:Optional[str]=None
     general:Optional[str]=None
+    next_appointment:Optional[str]=None
+
+
+#  report
+class report(BaseModel):
+    patient_id:int
+    assesment_completed:Optional[list]
+    health_goal:Optional[list]
+    assesment_list:Optional[list]
+    consult_data:Optional[dict]
 
 
 #scehema
 #1 consult
 class consult_filter(BaseModel):
+    patient_id:Optional[int]=0
     patient_mobile:Optional[str]=None
     patient_name:Optional[str]=None
+    created_by:Optional[int]=0
+
+
+#1 consult
+class report_filter(BaseModel):
+    report_id:Optional[int]=0
+    patient_id:Optional[int]=0
+    patient_mobile:Optional[str]=None
+    patient_name:Optional[str]=None
+    doctor_consult_id:Optional[int]=0
     created_by:Optional[int]=0
     
 #scehema
@@ -200,7 +222,7 @@ async def consult_create(request:Request,payload:consult):
     if response['status'] != "true":
         raise HTTPException(status_code=400,detail=response)
 
-    payload['data'] = json.dumps({"private_observation":payload['private_observation'],"prescription_lifestyle":payload['prescription_lifestyle'],"prescription_medical":payload['prescription_medical'],"general":payload['general']})
+    payload['data'] = json.dumps({"private_observation":payload['private_observation'],"prescription_lifestyle":payload['prescription_lifestyle'],"prescription_medical":payload['prescription_medical'],"general":payload['general'],"next_appointment":payload['next_appointment']})
     #query set
     query="""insert into consult (created_by,patient_id,data)
         values (:created_by,:patient_id,:data)
@@ -226,18 +248,19 @@ async def consult_filter(request:Request,payload:consult_filter):
         raise HTTPException(status_code=400,detail=response)
 
     #query set
-    query="""select u.mobile, u.name, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
-    left join "user" as u on u.id=c.patient_id 
+    query="""select p.mobile, p.name, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
+    left join patient as p on p.id=c.patient_id 
     left join "user" as d on d.id=c.created_by
-    where u.is_active='true'"""
+    where p.is_active='true'"""
 
-    
+    if payload['patient_id']:
+        query = query+" and p.id="+str(payload['patient_id'])
     if payload['patient_mobile']:
-        query = query+" and u.mobile like '%"+payload['patient_mobile']+"%'"
+        query = query+" and p.mobile like '%"+payload['patient_mobile']+"%'"
     if payload['patient_name']:
-        query = query+" and u.name like '%"+payload['patient_name']+"%'"
+        query = query+" and p.name like '%"+payload['patient_name']+"%'"
     if payload['created_by']:
-        query = query + " and c.created_by='"+str(payload['created_by'])+"'"
+        query = query + " and p.created_by='"+str(payload['created_by'])+"'"
         
     values={}
     #query run
@@ -250,6 +273,79 @@ async def consult_filter(request:Request,payload:consult_filter):
     return response
 
 
+# -------------------------------------------------------------------------------------
+#report
+#1 report create
+
+@router.post("/report")
+async def report_create(request:Request,payload:report):
+    #prework
+    user_id = request.state.user_id
+    payload=payload.dict()
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
+
+    payload['data'] = json.dumps({
+        "assesment_completed":payload['assesment_completed'],
+        "health_goal":payload['health_goal'],
+        "assesment_list":payload['assesment_list'],
+        "consult_data":payload['consult_data'],
+        })
+    #query set
+    query="""insert into consult (created_by,patient_id,data,type)
+        values (:created_by,:patient_id,:data,:type)
+        returning *"""
+    values={"created_by":user_id,"patient_id":payload['patient_id'],"data":payload['data'],"type":'report'}
+    
+    #query run
+    response = await database_execute(query,values)
+    if response["status"]=="false":
+        raise HTTPException(status_code=400,detail=response)
+
+    return response
+
+
+
+#2 consult filter
+@router.post("/report/filter")
+async def consult_filter(request:Request,payload:report_filter):
+    user_id = request.state.user_id
+    payload=payload.dict()
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
+
+    #query set
+    query="""select p.mobile, p.name,p.email, p.height, p.weight, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
+    left join patient as p on p.id=c.patient_id 
+    left join "user" as d on d.id=c.created_by
+    where p.is_active='true'"""
+
+    if payload['patient_id']:
+        query = query+" and p.id="+str(payload['patient_id'])
+    if payload['patient_mobile']:
+        query = query+" and p.mobile like '%"+payload['patient_mobile']+"%'"
+    if payload['patient_name']:
+        query = query+" and p.name like '%"+payload['patient_name']+"%'"
+    if payload['created_by']:
+        query = query + " and c.created_by='"+str(payload['created_by'])+"'"    
+    if payload['doctor_consult_id']:
+        query = query+" and c.doctor_consult_id ='"+str(payload['doctor_consult_id'])+"'"
+    if payload['report_id']:
+        query = query+" and c.id ='"+str(payload['report_id'])+"'"
+
+    values={}
+    #query run
+    response=await database_fetch_all(query,values)
+    if response["status"]=="false":
+        raise HTTPException(status_code=400,detail=response)
+    row=response["message"]
+    #finally
+    response=row
+    return response
 
 #----------------------------------------------------------------------------------------
 
