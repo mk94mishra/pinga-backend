@@ -57,6 +57,7 @@ class consult(BaseModel):
 class report(BaseModel):
     patient_id:int
     assesment_completed:Optional[list]
+    health_step:Optional[dict]
     health_goal:Optional[list]
     assesment_list:Optional[list]
     consult_data:Optional[dict]
@@ -289,6 +290,7 @@ async def report_create(request:Request,payload:report):
 
     payload['data'] = json.dumps({
         "assesment_completed":payload['assesment_completed'],
+        "health_step":payload['health_step'],
         "health_goal":payload['health_goal'],
         "assesment_list":payload['assesment_list'],
         "consult_data":payload['consult_data'],
