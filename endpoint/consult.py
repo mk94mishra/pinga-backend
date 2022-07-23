@@ -63,6 +63,10 @@ class report(BaseModel):
     consult_data:Optional[dict]
 
 
+class report_v2(BaseModel):
+    patient_id:int
+    data:dict
+
 #scehema
 #1 consult
 class consult_filter(BaseModel):
@@ -277,7 +281,39 @@ async def consult_filter(request:Request,payload:consult_filter):
 # -------------------------------------------------------------------------------------
 #report
 #1 report create
+# v: 2.0
+@router.post("/v2/report")
+async def report_create_v2(request:Request,payload:report_v2):
+    #prework
+    user_id = request.state.user_id
+    payload=payload.dict()
+    #admin user check
+    response = await is_admin(user_id)
+    if response['status'] != "true":
+        raise HTTPException(status_code=400,detail=response)
 
+    # payload['data'] = json.dumps({
+    #     "assesment_completed":payload['assesment_completed'],
+    #     "health_step":payload['health_step'],
+    #     "health_goal":payload['health_goal'],
+    #     "assesment_list":payload['assesment_list'],
+    #     "consult_data":payload['consult_data'],
+    #     })
+    payload['data'] = json.dumps(payload['data'])
+    #query set
+    query="""insert into consult (created_by,patient_id,data,type)
+        values (:created_by,:patient_id,:data,:type)
+        returning *"""
+    values={"created_by":user_id,"patient_id":payload['patient_id'],"data":payload['data'],"type":'report'}
+    
+    #query run
+    response = await database_execute(query,values)
+    if response["status"]=="false":
+        raise HTTPException(status_code=400,detail=response)
+
+    return response
+
+# ------------------------------------------------------------------------------------
 @router.post("/report")
 async def report_create(request:Request,payload:report):
     #prework
@@ -310,6 +346,8 @@ async def report_create(request:Request,payload:report):
 
 
 
+
+
 #2 consult filter
 @router.post("/report/filter")
 async def consult_filter(request:Request,payload:report_filter):
@@ -321,7 +359,7 @@ async def consult_filter(request:Request,payload:report_filter):
         raise HTTPException(status_code=400,detail=response)
 
     #query set
-    query="""select p.mobile, p.name,p.email, p.height, p.weight,(p.data->'bmi')::TEXT as bmi, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
+    query="""select p.mobile, p.name,p.email, p.height, p.dob, p.weight,(p.data->'bmi')::TEXT as bmi, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
     left join patient as p on p.id=c.patient_id 
     left join "user" as d on d.id=c.created_by
     where p.is_active='true'"""
