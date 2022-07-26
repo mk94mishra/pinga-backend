@@ -67,6 +67,7 @@ class user_profile(BaseModel):
 #3 user:create
 class user_create(BaseModel):
    name:str
+   gender:str
    dob:str
    height:str
    mobile:str
@@ -187,7 +188,7 @@ async def patient_create_by_admin(request:Request,payload:user_create):
    if response['status'] != "true":
       raise HTTPException(status_code=401,detail=response) 
    #query set
-   query="""insert into patient (name,gender,dob,height,mobile,email,weight,data,password,type,created_by) values (:name,:dob,:height,:mobile,:email,:weight,:data,:password,:type,:created_by) returning *"""
+   query="""insert into patient (name,gender,dob,height,mobile,email,weight,data,password,type,created_by) values (:name,:gender,:dob,:height,:mobile,:email,:weight,:data,:password,:type,:created_by) returning *"""
    values={"name":payload['name'],"gender":payload['gender'],"dob":payload['dob'],"height":payload['height'],"mobile":payload['mobile'],"email":payload['email'],"weight":payload["weight"],"data":'{"bmi":"'+payload["bmi"]+'"}',"password":password_hash,"type":payload['type'],"created_by":user_id}
    #query run
    response=await database_execute(query,values)
