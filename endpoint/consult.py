@@ -359,7 +359,7 @@ async def consult_filter(request:Request,payload:report_filter):
         raise HTTPException(status_code=400,detail=response)
 
     #query set
-    query="""select p.mobile, p.name,p.email, p.height, p.dob, p.weight,(p.data->'bmi')::TEXT as bmi, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
+    query="""select p.mobile, p.name,p.gender,p.email, p.height, p.dob, p.weight,(p.data->'bmi')::TEXT as bmi, d.name as dr_name, d.mobile as dr_mobile, c.* from consult as c 
     left join patient as p on p.id=c.patient_id 
     left join "user" as d on d.id=c.created_by
     where p.is_active='true'"""

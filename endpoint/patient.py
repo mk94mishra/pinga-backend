@@ -21,14 +21,14 @@ class user_type(str, Enum):
     user="patient"
 #2 gender
 class gender(str, Enum):
-   cis_female='Cis female'
-   cis_male='Cis male'
-   gender_expansive='Gender expansive'
-   intersex='Intersex'
-   non_binary='Non binary'
-   trans_female='Trans female'
-   trans_male='Trans male'
-   prefer_not_to_say='Prefer not to say'
+   male='male'
+   female='female'
+   # gender_expansive='Gender expansive'
+   # intersex='Intersex'
+   # non_binary='Non binary'
+   # trans_female='Trans female'
+   # trans_male='Trans male'
+   # prefer_not_to_say='Prefer not to say'
   
 
 #scehema
@@ -187,8 +187,8 @@ async def patient_create_by_admin(request:Request,payload:user_create):
    if response['status'] != "true":
       raise HTTPException(status_code=401,detail=response) 
    #query set
-   query="""insert into patient (name,dob,height,mobile,email,weight,data,password,type,created_by) values (:name,:dob,:height,:mobile,:email,:weight,:data,:password,:type,:created_by) returning *"""
-   values={"name":payload['name'],"dob":payload['dob'],"height":payload['height'],"mobile":payload['mobile'],"email":payload['email'],"weight":payload["weight"],"data":'{"bmi":"'+payload["bmi"]+'"}',"password":password_hash,"type":payload['type'],"created_by":user_id}
+   query="""insert into patient (name,gender,dob,height,mobile,email,weight,data,password,type,created_by) values (:name,:dob,:height,:mobile,:email,:weight,:data,:password,:type,:created_by) returning *"""
+   values={"name":payload['name'],"gender":payload['gender'],"dob":payload['dob'],"height":payload['height'],"mobile":payload['mobile'],"email":payload['email'],"weight":payload["weight"],"data":'{"bmi":"'+payload["bmi"]+'"}',"password":password_hash,"type":payload['type'],"created_by":user_id}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
