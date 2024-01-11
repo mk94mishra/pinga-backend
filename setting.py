@@ -1,6 +1,7 @@
-#1 env file load
-from dotenv import dotenv_values
-config = dotenv_values(".env")
+# #1 env file load
+# from dotenv import dotenv_values
+# config = dotenv_values(".env")
+from config import config_data as config
 
 min_size=5
 max_size=10
