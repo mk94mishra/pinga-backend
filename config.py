@@ -1,7 +1,7 @@
 config_data = {
     'db_user':'doadmin',
-    'db_password':'AVNS_Ew8FU-bhG9HtBscOuo_',
-    'db_host':'db-postgresql-blr1-57594-do-user-15577781-0.c.db.ondigitalocean.com',
+    'db_password':'AVNS_rg4i2sCCl1Urkpgmkys',
+    'db_host':'db-postgresql-nyc3-95507-do-user-15577781-0.c.db.ondigitalocean.com',
     'db_port':'25060',
     'db_name':'defaultdb',
     # 'backend_server_host':'localhost',
