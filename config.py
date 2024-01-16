@@ -8,7 +8,7 @@ config_data = {
     'backend_server_host':'0.0.0.0',
     # 'backend_server_port':'8000',
     'backend_server_port':'80',
-    'token_secret_key':'',
+    'token_secret_key':'8b4d8a24c799f5c8aa00999db5110dad',
     'aws_service':'',
     'region_name':'',
     'aws_access_key_id':'',
