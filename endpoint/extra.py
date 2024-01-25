@@ -420,10 +420,10 @@ async def extra_update_admin(request:Request,id:int,payload:admin):
    #prework
    user_id=request.state.user_id
    payload=payload.dict()
-   payload = json.dumps(payload)
+   payload = json.dumps(payload['data'])
    #query set
    query="""update extra set data=:data where id=:id returning *"""
-   values={"id":id,"data":payload['data']}
+   values={"id":id,"data":payload}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
