@@ -59,7 +59,7 @@ class user_profile(BaseModel):
    name:str
    email:str
    gender:gender
-   dob:date
+   dob:str
    profile_pic_url:str
    height:str
    weight:str
