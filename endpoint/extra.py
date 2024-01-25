@@ -423,7 +423,7 @@ async def extra_update_admin(request:Request,id:int,payload:admin):
    payload = json.dumps(payload)
    #query set
    query="""update extra set data=:data where id=:id returning *"""
-   values={"id":id,"data":payload}
+   values={"id":id,"data":payload['data']}
    #query run
    response=await database_execute(query,values)
    if response["status"]=="false":
