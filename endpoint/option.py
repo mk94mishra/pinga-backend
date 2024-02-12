@@ -72,7 +72,7 @@ async def option_update(request:Request,payload:option,option_id:int):
    
    #query set
    query="""update option set question_id=:question_id,title=:title,media_type=:media_type,media_url=:media_url,media_thumbnail_url=:media_thumbnail_url,weightage=:weightage where id=:option_id"""
-   values={"created_by_id":user_id,"question_id":payload['question_id'],"title":payload['title'],"media_type":payload['media_type'],"media_url":payload['media_url'],"media_thumbnail_url":payload['media_thumbnail_url'],"weightage":payload['weightage'],"option_id":option_id}
+   values={"question_id":payload['question_id'],"title":payload['title'],"media_type":payload['media_type'],"media_url":payload['media_url'],"media_thumbnail_url":payload['media_thumbnail_url'],"weightage":payload['weightage'],"option_id":option_id}
    #query run
    response = await database_execute(query,values)
    if response["status"]=="false":
