@@ -29,8 +29,11 @@ async def answer_create(request:Request,payload:answer):
       raise HTTPException(status_code=400,detail=response)
 
    #query set
-   query="""insert into answer (created_by_id,option_id,data) values (:created_by_id,:option_id,:data) returning *"""
+   query="""insert into answer (created_by_id,option_id,data,created_at) values (:created_by_id,:option_id,:data,:created_at) returning *"""
    # values={"created_by_id":user_id,"option_id":payload['option_id']}
+
+      # Get the current time in UTC
+   created_at = datetime.datetime.utcnow()
 
    values_list = []
    i=0
@@ -39,7 +42,7 @@ async def answer_create(request:Request,payload:answer):
       if payload['scale']:
          scale = json.dumps({"scale":payload['scale'][i]})
       i = i + 1
-      values_list.append({"created_by_id": user_id, "option_id": o_id, "data":scale})
+      values_list.append({"created_by_id": user_id, "option_id": o_id, "data":scale, "created_at": created_at})
    values = values_list
    #query run
    response=await database_execute_many(query,values)
@@ -74,7 +77,7 @@ async def answer_read(request:Request,user_id:int,form_id:int):
             o.media_url AS option_media_url,
             o.media_thumbnail_url AS option_media_thumbnail_url,
             o.weightage AS option_weightage,
-            ROW_NUMBER() OVER (PARTITION BY a.created_by_id, q.form_id, a.option_id ORDER BY a.created_at DESC) AS rn
+            ROW_NUMBER() OVER (PARTITION BY q.id, a.option_id ORDER BY a.created_at DESC) AS rn
          FROM 
             answer AS a
          LEFT JOIN 
