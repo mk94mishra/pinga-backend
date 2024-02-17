@@ -101,7 +101,7 @@ async def result_read(request:Request,user_id:int,form_id:int):
             user_sum_final_score=user_sum_final_score+q_final_score
       i=i+1
         
-   # query set
+   # query
    query="""
          with
          sum_score as (select sum(score) as sum_score 
