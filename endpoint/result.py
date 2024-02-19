@@ -188,13 +188,14 @@ async def result_read(request:Request,user_id:int,form_id:int):
     # Calculate the total score and total question score
     total_score = 0
     total_question_score = 0
-    map = {}
+    # map = {}
     
     for row in response['message']:    
         total_score += row['question_score'] * row['option_weightage'] / 10
-        map[row['question_id']] = row['question_score'] # for storing total of all unique questions
+        # map[row['question_id']] = row['question_score'] # for storing total of all unique questions
+        total_question_score += row['question_score'] # for storing total of all questions
 
-    total_question_score = sum(map.values())
+    # total_question_score = sum(map.values())
 
     # Ensure total_question_score is not zero to avoid division by zero
     if total_question_score == 0:
